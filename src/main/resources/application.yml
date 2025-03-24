@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: SchoolManagementSystem
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+    open-in-view: false
+  datasource:
+    url: jdbc:mysql://localhost:3306/school_system
+    username: root
+    password: Elprinse9
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      auto-commit: false
+  data:
+    jdbc:
+      dialect: mysql
+#  main:
+#    allow-circular-references: true
+#  cache:
+#    redis:
+#      cache-null-values: true
+#    type: redis
+#logging:
+#  level:
+#    sql: debug
+#    root: debug
+server:
+  port: 1234
