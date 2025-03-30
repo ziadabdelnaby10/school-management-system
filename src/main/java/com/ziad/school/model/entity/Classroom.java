@@ -13,9 +13,11 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "t_classroom")
-public class Classroom extends AbstractPersistable<Long> {
-    @Column(columnDefinition = "YEAR")
-    private Integer year;
+public class Classroom {
+    @Id
+    @Column(nullable = false , unique = true)
+    private String name;
+
 
     @Column(length = 2 , unique = true)
     private String section;
@@ -25,6 +27,9 @@ public class Classroom extends AbstractPersistable<Long> {
 
     @Column(length = 45)
     private String remarks;
+
+    @ManyToOne
+    private StudyYear year;
 
     @ManyToMany(fetch = FetchType.LAZY , mappedBy = "classrooms")
     private Set<Student> students = new HashSet<>();

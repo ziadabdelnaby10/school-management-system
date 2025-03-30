@@ -16,7 +16,6 @@ public class AttendanceInfo implements Serializable {
     private Long id;
     @JsonFormat(shape = JsonFormat.Shape.STRING , pattern = "yyyy/MM/dd@HH:mm:ss")
     private LocalDateTime dateOfAttendance;
-//    private StudentDto student;
     private Boolean isAttendance;
     private String remark;
 }

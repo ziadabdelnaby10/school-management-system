@@ -8,19 +8,16 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.jpa.domain.AbstractPersistable;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
-@Table(name = "t_exam_type")
-public class ExamType {
-  @Id
-  @Column(length = 45 , unique = true , nullable = false)
-  private String name;
-  @Column(length = 45)
-  private String description;
+@Table(name = "t_subject")
+public class Subject {
+    @Id
+    @Column(name = "name", nullable = false , unique = true)
+    private String name;
 
 }

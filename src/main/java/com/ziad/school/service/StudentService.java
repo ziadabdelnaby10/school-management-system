@@ -3,11 +3,15 @@ package com.ziad.school.service;
 import com.ziad.school.mapper.StudentMapper;
 import com.ziad.school.model.dto.StudentInfo;
 import com.ziad.school.model.entity.Student;
-import com.ziad.school.model.request.AddClassroomToStudentRequest;
-import com.ziad.school.model.request.AddCourseToStudentRequest;
-import com.ziad.school.model.request.AddStudentRequest;
-import com.ziad.school.model.request.AddStudentToParentRequest;
+import com.ziad.school.model.request.student.UpdateStudentRequest;
+import com.ziad.school.model.request.student.AddClassroomToStudentRequest;
+import com.ziad.school.model.request.student.AddCourseToStudentRequest;
+import com.ziad.school.model.request.student.AddStudentRequest;
+import com.ziad.school.model.request.student.AddStudentToParentRequest;
 import com.ziad.school.model.response.StudentAttendanceResponse;
+import com.ziad.school.model.response.StudentClassroomsResponse;
+import com.ziad.school.model.response.StudentCoursesResponse;
+import com.ziad.school.model.response.StudentParentResponse;
 import com.ziad.school.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -49,8 +53,23 @@ public class StudentService {
     }
 
     public StudentAttendanceResponse getStudentAttendances(UUID studentId) {
-        Student student = studentRepository.findAllWithAttendance(studentId);
+        Student student = studentRepository.findStudentWithAttendances(studentId);
         return studentMapper.toAttendanceResponse(student);
+    }
+
+    public StudentParentResponse getStudentParent(UUID studentId) {
+        Student student = studentRepository.findStudentWithParent(studentId);
+        return studentMapper.toParentResponse(student);
+    }
+
+    public StudentClassroomsResponse getStudentClassrooms(UUID studentId) {
+        Student student = studentRepository.findStudentWithClassrooms(studentId);
+        return studentMapper.toClassroomResponse(student);
+    }
+
+    public StudentCoursesResponse getStudentCourses(UUID studentId) {
+        Student student = studentRepository.findStudentWithCourses(studentId);
+        return studentMapper.toCoursesResponse(student);
     }
 
     public StudentInfo addParentToStudent(AddStudentToParentRequest request) {
@@ -73,5 +92,15 @@ public class StudentService {
         var student = studentRepository.findById(request.studentId()).orElseThrow(EntityNotFoundException::new);
         student.getCourses().add(course);
         return studentMapper.toDto(studentRepository.save(student));
+    }
+
+    public void deleteStudent(UUID studentId) {
+        studentRepository.deleteById(studentId);
+    }
+
+    public StudentInfo updateStudent(UUID studentId , UpdateStudentRequest request){
+        var oldStudent = studentRepository.findById(studentId).orElseThrow(EntityNotFoundException::new);
+        var newStudent = studentMapper.partialUpdate(request , oldStudent);
+        return studentMapper.toDto(studentRepository.save(newStudent));
     }
 }

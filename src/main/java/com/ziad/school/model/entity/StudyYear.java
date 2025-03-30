@@ -8,19 +8,18 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.jpa.domain.AbstractPersistable;
 
-@AllArgsConstructor
-@NoArgsConstructor
+import java.io.Serializable;
+
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Table(name = "t_exam_type")
-public class ExamType {
-  @Id
-  @Column(length = 45 , unique = true , nullable = false)
-  private String name;
-  @Column(length = 45)
-  private String description;
+@Table(name = "t_study_year")
+public class StudyYear implements Serializable {
 
+    @Id
+    @Column(nullable = false , unique = true , name = "year_name")
+    private String name;
 }

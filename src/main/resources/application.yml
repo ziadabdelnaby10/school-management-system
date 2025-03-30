@@ -4,7 +4,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true
@@ -13,7 +13,8 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/school_system
     username: root
-    password: Elprinse9
+    password: password
+
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       auto-commit: false
@@ -32,3 +33,6 @@ spring:
 #    root: debug
 server:
   port: 1234
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

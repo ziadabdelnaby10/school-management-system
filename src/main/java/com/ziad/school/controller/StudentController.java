@@ -1,12 +1,12 @@
 package com.ziad.school.controller;
 
 import com.ziad.school.model.dto.StudentInfo;
-import com.ziad.school.model.request.AddClassroomToStudentRequest;
-import com.ziad.school.model.request.AddCourseToStudentRequest;
-import com.ziad.school.model.request.AddStudentRequest;
-import com.ziad.school.model.request.AddStudentToParentRequest;
-import com.ziad.school.model.response.ApiResponse;
-import com.ziad.school.model.response.StudentAttendanceResponse;
+import com.ziad.school.model.request.student.UpdateStudentRequest;
+import com.ziad.school.model.request.student.AddClassroomToStudentRequest;
+import com.ziad.school.model.request.student.AddCourseToStudentRequest;
+import com.ziad.school.model.request.student.AddStudentRequest;
+import com.ziad.school.model.request.student.AddStudentToParentRequest;
+import com.ziad.school.model.response.*;
 import com.ziad.school.service.StudentService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -60,8 +60,61 @@ public class StudentController {
     public ApiResponse<StudentAttendanceResponse> getStudentAttendances(@PathVariable @Valid @NotNull @NotBlank UUID studentId) {
         return new ApiResponse<>(
                 HttpStatus.OK.value(),
-                "Successfully retrived attendances of the student with ID " + studentId,
+                "Successfully fetched attendances of the student with ID " + studentId,
                 studentService.getStudentAttendances(studentId)
+        );
+    }
+
+    @GetMapping("/{studentId}/parent")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<StudentParentResponse> getStudentParent(@PathVariable @Valid @NotNull @NotBlank UUID studentId) {
+        return new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Successfully fetched parent of the student with ID " + studentId,
+                studentService.getStudentParent(studentId)
+        );
+    }
+
+    @GetMapping("/{studentId}/classroom")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<StudentClassroomsResponse> getStudentClassroom(@PathVariable @Valid @NotNull @NotBlank UUID studentId) {
+        return new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Successfully fetched classrooms of the student with ID " + studentId,
+                studentService.getStudentClassrooms(studentId)
+        );
+    }
+
+    @GetMapping("/{studentId}/course")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<StudentCoursesResponse> getStudentCourses(@PathVariable @Valid @NotNull @NotBlank UUID studentId) {
+        return new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Successfully fetched courses of the student with ID " + studentId,
+                studentService.getStudentCourses(studentId)
+        );
+    }
+
+    @DeleteMapping("/{studentId}/delete")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<UUID> deleteStudent(@PathVariable @Valid @NotNull @NotBlank UUID studentId) {
+        studentService.deleteStudent(studentId);
+        return new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Deleted Successfully",
+                studentId
+        );
+    }
+
+    @PutMapping("/{studentId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ApiResponse<StudentInfo> updateStudent(@PathVariable @NotNull(message = "Must Provide The Id")
+                                                  @NotBlank(message = "Must Provide The Id")
+                                                  UUID studentId, UpdateStudentRequest updateStudentRequest) {
+        return new ApiResponse<>(
+                HttpStatus.CREATED.value(),
+                "Updated Student with id " + studentId,
+                studentService.updateStudent(studentId , updateStudentRequest)
         );
     }
 
@@ -105,3 +158,5 @@ public class StudentController {
         );
     }
 }
+
+//https://medium.com/@burakkocakeu/in-spring-data-jpa-onetomany-what-are-these-fields-mappedby-fetch-cascade-and-orphanremoval-2655f4027c4f#:~:text=orphanRemoval%20is%20specifically%20designed%20to,are%20referenced%20by%20other%20entities.

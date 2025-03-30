@@ -1,6 +1,5 @@
-package com.ziad.school.model.request;
+package com.ziad.school.model.request.student;
 
-import com.ziad.school.model.enums.Subject;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
 
@@ -8,9 +7,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * DTO for {@link com.ziad.school.model.entity.Teacher}
+ * DTO for {@link com.ziad.school.model.entity.Student}
  */
-public record AddTeacherRequest(
+public record AddStudentRequest(
         @NotNull(message = "Must Enter The First Name")
         @NotEmpty(message = "The First Name Cannot be empty")
         @NotBlank(message = "The First Name Cannot be blank")
@@ -31,10 +30,10 @@ public record AddTeacherRequest(
         @NotEmpty(message = "The Password Cannot be empty")
         @NotBlank(message = "The Password Cannot be blank")
         @Length(message = "Enter A valid Length", max = 45)
+        String password,
         String phone,
+        Boolean isMale,
         String mobile,
         Date dateOfBirth,
-        Boolean isActive,
-        Subject teachingSubject
-) implements Serializable {
+        String currentYear) implements Serializable {
 }

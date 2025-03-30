@@ -20,6 +20,6 @@ public class Exam extends AbstractPersistable<Long> {
     @Temporal(TemporalType.DATE)
     private Date start_date;
 
-    @OneToOne(orphanRemoval = true)
+    @ManyToOne
     private ExamType examType;
 }

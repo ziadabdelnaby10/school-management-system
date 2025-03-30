@@ -36,4 +36,8 @@ public class ParentService {
         newParent.setIsActive(true);
         return parentMapper.toDto(parentRepository.save(newParent));
     }
+
+    public void deleteParent(UUID parentId) {
+        parentRepository.deleteById(parentId);
+    }
 }

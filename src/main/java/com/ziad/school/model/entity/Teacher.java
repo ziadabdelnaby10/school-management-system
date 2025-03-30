@@ -1,6 +1,5 @@
 package com.ziad.school.model.entity;
 
-import com.ziad.school.model.enums.Subject;
 import com.ziad.school.model.base.Person;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,6 +23,6 @@ public class Teacher extends Person {
     )
     private Set<Classroom> classrooms = new HashSet<>();
 
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
     private Subject teachingSubject;
 }

@@ -22,7 +22,18 @@ public interface StudentRepository extends JpaRepository<Student, UUID>, JpaSpec
 
     @Query("select s from Student s left join fetch Attendance where s.id = ?1")
 //    @EntityGraph(attributePaths = {"attendance"})
-    Student findAllWithAttendance(UUID id);
+    Student findStudentWithAttendances(UUID id);
+
+    @Query("select s from Student s left join fetch Parent where s.id = ?1")
+    Student findStudentWithParent(UUID id);
+
+    @Query("select s from Student s left join fetch Course where s.id = ?1")
+    Student findStudentWithCourses(UUID id);
+
+    @Query("select s from Student s left join fetch Classroom where s.id = ?1")
+    Student findStudentWithClassrooms(UUID id);
+
+
 
 
 

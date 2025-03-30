@@ -16,8 +16,9 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "t_course")
-public class Course extends AbstractPersistable<Long> {
-    @Column(length = 45)
+public class Course{
+    @Id
+    @Column(length = 45 , nullable = false , unique = true)
     private String name;
 
     @Column(length = 45)

@@ -1,6 +1,5 @@
 package com.ziad.school.model.entity;
 
-import com.ziad.school.model.enums.Year;
 import com.ziad.school.model.base.Person;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -22,9 +21,8 @@ import java.util.Set;
 //@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class , property = "id")
 public class Student extends Person {
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Year currentYear;
+    @ManyToOne
+    private StudyYear currentYear;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")

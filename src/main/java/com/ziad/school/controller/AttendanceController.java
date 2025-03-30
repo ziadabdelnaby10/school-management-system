@@ -24,4 +24,6 @@ public class AttendanceController {
     public AttendanceInfo addAttendance(@RequestBody @Valid AddAttendanceRequest request) {
         return attendanceService.addNewAttendance(request);
     }
+
+
 }

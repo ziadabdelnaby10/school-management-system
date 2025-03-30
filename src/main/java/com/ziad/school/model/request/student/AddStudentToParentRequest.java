@@ -1,4 +1,4 @@
-package com.ziad.school.model.request;
+package com.ziad.school.model.request.student;
 
 import jakarta.validation.constraints.NotNull;
 
