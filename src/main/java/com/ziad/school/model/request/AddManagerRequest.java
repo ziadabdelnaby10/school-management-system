@@ -1,7 +1,5 @@
-package com.ziad.school.model.request.student;
+package com.ziad.school.model.request;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.ziad.school.model.base.StudyYear;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
 
@@ -9,9 +7,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * DTO for {@link com.ziad.school.model.entity.Student}
+ * DTO for {@link com.ziad.school.model.entity.Manager}
  */
-public record AddStudentRequest(
+public record AddManagerRequest(
         @NotNull(message = "Must Enter The First Name")
         @NotEmpty(message = "The First Name Cannot be empty")
         @NotBlank(message = "The First Name Cannot be blank")
@@ -32,10 +30,10 @@ public record AddStudentRequest(
         @NotEmpty(message = "The Password Cannot be empty")
         @NotBlank(message = "The Password Cannot be blank")
         String password,
-        String phone,
         Boolean isMale,
+        String phone,
         String mobile,
-        @JsonFormat(pattern = "dd-MM-yyyy")
         Date dateOfBirth,
-        StudyYear currentYear) implements Serializable {
+        Boolean isActive
+) implements Serializable {
 }

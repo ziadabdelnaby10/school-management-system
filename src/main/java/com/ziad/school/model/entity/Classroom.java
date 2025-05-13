@@ -1,8 +1,11 @@
 package com.ziad.school.model.entity;
 
+import com.ziad.school.model.base.StudyYear;
 import jakarta.persistence.*;
-import lombok.*;
-import org.springframework.data.jpa.domain.AbstractPersistable;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,7 +31,7 @@ public class Classroom {
     @Column(length = 45)
     private String remarks;
 
-    @ManyToOne
+    @Enumerated(EnumType.STRING)
     private StudyYear year;
 
     @ManyToMany(fetch = FetchType.LAZY , mappedBy = "classrooms")

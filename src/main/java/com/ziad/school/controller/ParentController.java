@@ -1,10 +1,8 @@
 package com.ziad.school.controller;
 
 import com.ziad.school.model.dto.ParentInfo;
-import com.ziad.school.model.request.AddParentRequest;
 import com.ziad.school.model.response.ApiResponse;
 import com.ziad.school.service.ParentService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -23,18 +21,8 @@ public class ParentController {
     public ApiResponse<List<ParentInfo>> getAllParents() {
         return new ApiResponse<>(
                 HttpStatus.OK.value(),
-                "Successfullt retrived all parents",
+                "Successfully fetched all parents",
                 parentService.getAllParents()
-        );
-    }
-
-    @PostMapping("/add")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<ParentInfo> createParent(@RequestBody @Valid AddParentRequest request) {
-        return new ApiResponse<>(
-                HttpStatus.CREATED.value(),
-                "Successfully added parent",
-                parentService.createParent(request)
         );
     }
 

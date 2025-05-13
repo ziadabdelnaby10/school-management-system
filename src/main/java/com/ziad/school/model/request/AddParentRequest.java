@@ -29,7 +29,6 @@ public record AddParentRequest(
         @NotNull(message = "Must Enter The Password")
         @NotEmpty(message = "The Password Cannot be empty")
         @NotBlank(message = "The Password Cannot be blank")
-        @Length(message = "Enter A valid Length", max = 45)
         String password,
         Boolean isMale,
         String phone,

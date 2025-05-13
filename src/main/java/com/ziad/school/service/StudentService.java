@@ -3,11 +3,7 @@ package com.ziad.school.service;
 import com.ziad.school.mapper.StudentMapper;
 import com.ziad.school.model.dto.StudentInfo;
 import com.ziad.school.model.entity.Student;
-import com.ziad.school.model.request.student.UpdateStudentRequest;
-import com.ziad.school.model.request.student.AddClassroomToStudentRequest;
-import com.ziad.school.model.request.student.AddCourseToStudentRequest;
-import com.ziad.school.model.request.student.AddStudentRequest;
-import com.ziad.school.model.request.student.AddStudentToParentRequest;
+import com.ziad.school.model.request.student.*;
 import com.ziad.school.model.response.StudentAttendanceResponse;
 import com.ziad.school.model.response.StudentClassroomsResponse;
 import com.ziad.school.model.response.StudentCoursesResponse;
@@ -17,9 +13,9 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -31,14 +27,12 @@ public class StudentService {
     private final AttendanceRepository attendanceRepository;
     private final ClassroomRepository classroomRepository;
     private final CourseRepository courseRepository;
-
-    //    @Cacheable(value = "student")
-    public List<StudentInfo> getAllStudents() {
-        return studentRepository.findAll().stream().map(studentMapper::toDto).toList();
-    }
+    private final PasswordEncoder passwordEncoder;
 
     public Page<StudentInfo> getAllStudents(Pageable pageable) {
-        return studentRepository.findAll(pageable).map(studentMapper::toDto);
+        var students = studentRepository.findAll(pageable);
+        var mappedStudents = students.map(studentMapper::toDto);
+        return mappedStudents;
     }
 
     //    @Cacheable(value = "student" , key = "#id")
@@ -46,10 +40,12 @@ public class StudentService {
         return studentMapper.toDto(studentRepository.findById(id).orElseThrow(EntityNotFoundException::new));
     }
 
-    public StudentInfo createStudent(AddStudentRequest student) {
+    public void createStudent(AddStudentRequest student) {
+        var hashPassword = passwordEncoder.encode(student.password());
         var newStudent = studentMapper.toEntity(student);
+        newStudent.setPassword(hashPassword);
         newStudent.setIsActive(Boolean.TRUE);
-        return studentMapper.toDto(studentRepository.save(newStudent));
+        studentRepository.save(newStudent);
     }
 
     public StudentAttendanceResponse getStudentAttendances(UUID studentId) {
@@ -98,9 +94,9 @@ public class StudentService {
         studentRepository.deleteById(studentId);
     }
 
-    public StudentInfo updateStudent(UUID studentId , UpdateStudentRequest request){
+    public StudentInfo updateStudent(UUID studentId, UpdateStudentRequest request) {
         var oldStudent = studentRepository.findById(studentId).orElseThrow(EntityNotFoundException::new);
-        var newStudent = studentMapper.partialUpdate(request , oldStudent);
+        var newStudent = studentMapper.partialUpdate(request, oldStudent);
         return studentMapper.toDto(studentRepository.save(newStudent));
     }
 }
