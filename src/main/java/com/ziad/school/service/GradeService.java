@@ -2,6 +2,7 @@ package com.ziad.school.service;
 
 import com.ziad.school.mapper.GradeMapper;
 import com.ziad.school.model.dto.GradeInfo;
+import com.ziad.school.model.request.AddGradeRequest;
 import com.ziad.school.repository.GradeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

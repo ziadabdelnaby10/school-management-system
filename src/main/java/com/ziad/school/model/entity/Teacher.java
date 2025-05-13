@@ -4,15 +4,13 @@ import com.ziad.school.model.base.Person;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
-@Entity
-@Table(name = "t_teacher")
+@Entity(name = "t_teacher")
 public class Teacher extends Person {
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -25,4 +23,14 @@ public class Teacher extends Person {
 
     @ManyToOne
     private Subject teachingSubject;
+
+    public Teacher() {
+        this.setRole("ROLE_TEACHER");
+    }
+
+    public Teacher(String firstName, String lastName, Boolean isMale, String email, String password, String phone, String mobile, Date dateOfBirth, Boolean isActive, Set<Classroom> classrooms, Subject teachingSubject) {
+        super(firstName, lastName, isMale, email, "ROLE_TEACHER", password, phone, mobile, dateOfBirth, isActive);
+        this.classrooms = classrooms;
+        this.teachingSubject = teachingSubject;
+    }
 }

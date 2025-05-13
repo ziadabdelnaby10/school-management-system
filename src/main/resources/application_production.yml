@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: ${SPRING_APP_NAME:SchoolManagementSystem}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+  datasource:
+    url: jdbc:mysql://${DATABASE_HOST:localhost}:${DATABASE_PORT:3306}/${DATABASE_NAME:school_system}
+    username: ${DATABASE_USERNAME:root}
+    password: ${DATABASE_PASSWORD:password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      auto-commit: false
+  data:
+    jdbc:
+      dialect: mysql
+  security:
+    user:
+      name: ${SECURITY_USERNAME:root}
+      password: ${SECURITY_PASSWORD:root}
+  config:
+    activate:
+      on-profile: production
+server:
+  port: 1234
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+logging:
+  level:
+    org.springframework.security: error

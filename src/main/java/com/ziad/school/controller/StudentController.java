@@ -1,11 +1,7 @@
 package com.ziad.school.controller;
 
 import com.ziad.school.model.dto.StudentInfo;
-import com.ziad.school.model.request.student.UpdateStudentRequest;
-import com.ziad.school.model.request.student.AddClassroomToStudentRequest;
-import com.ziad.school.model.request.student.AddCourseToStudentRequest;
-import com.ziad.school.model.request.student.AddStudentRequest;
-import com.ziad.school.model.request.student.AddStudentToParentRequest;
+import com.ziad.school.model.request.student.*;
 import com.ziad.school.model.response.*;
 import com.ziad.school.service.StudentService;
 import jakarta.validation.Valid;
@@ -13,12 +9,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -27,23 +21,20 @@ import java.util.UUID;
 public class StudentController {
     private final StudentService studentService;
 
+//    @GetMapping
+//    @ResponseStatus(HttpStatus.OK)
+//    public ApiResponse<List<StudentInfo>> getAllStudents() {
+//        return new ApiResponse<>(
+//                HttpStatus.OK.value(),
+//                "Successfully retrieved all students",
+//                studentService.getAllStudents()
+//        );
+//    }
+
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<List<StudentInfo>> getAllStudents() {
-        return new ApiResponse<>(
-                HttpStatus.OK.value(),
-                "Successfully retrieved all students",
-                studentService.getAllStudents()
-        );
-    }
-
-    @GetMapping("/page")
-    @ResponseStatus(HttpStatus.OK)
-    public Page<StudentInfo> getAllStudents(
-            @RequestParam(required = false) Integer pageSize,
-            @RequestParam(required = false) Integer pageNumber
-    ) {
-        return studentService.getAllStudents(PageRequest.of(pageNumber, pageSize).withSort(Sort.by(Sort.Direction.ASC, "email")));
+    public Page<StudentInfo> getAllStudents(Pageable page) {
+        return studentService.getAllStudents(page);
     }
 
     @GetMapping("/{studentId}")
@@ -95,7 +86,7 @@ public class StudentController {
         );
     }
 
-    @DeleteMapping("/{studentId}/delete")
+    @DeleteMapping("/{studentId}")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<UUID> deleteStudent(@PathVariable @Valid @NotNull @NotBlank UUID studentId) {
         studentService.deleteStudent(studentId);
@@ -114,20 +105,13 @@ public class StudentController {
         return new ApiResponse<>(
                 HttpStatus.CREATED.value(),
                 "Updated Student with id " + studentId,
-                studentService.updateStudent(studentId , updateStudentRequest)
+                studentService.updateStudent(studentId, updateStudentRequest)
         );
     }
 
-    @PostMapping("/add")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<StudentInfo> addStudent(@RequestBody @Valid AddStudentRequest request) {
-        return new ApiResponse<>(
-                HttpStatus.CREATED.value(),
-                "Successfully add student",
-                studentService.createStudent(request)
-        );
-    }
 
+
+    //this should be modified to /add/{studentId}/parent
     @PostMapping("/add/parent")
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<StudentInfo> addParentToStudent(@RequestBody @Valid AddStudentToParentRequest request) {

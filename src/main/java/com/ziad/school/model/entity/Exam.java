@@ -22,4 +22,7 @@ public class Exam extends AbstractPersistable<Long> {
 
     @ManyToOne
     private ExamType examType;
+
+
+
 }

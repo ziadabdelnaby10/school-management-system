@@ -1,28 +1,27 @@
 package com.ziad.school.model.entity;
 
 import com.ziad.school.model.base.Person;
+import com.ziad.school.model.base.StudyYear;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 //@Cacheable TODO Search For second level caching
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
-@Table(name = "t_student")
+@Entity(name = "t_student")
 //@DynamicUpdate TODO Search About @DynamicUpdate
 //@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class , property = "id")
 public class Student extends Person {
 
-    @ManyToOne
-    private StudyYear currentYear;
+    //Convert this to enumerated
+//    @ManyToOne(cascade = CascadeType.ALL , optional = true)
+    @Enumerated(EnumType.STRING)
+    private com.ziad.school.model.base.StudyYear currentYear;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
@@ -59,4 +58,19 @@ public class Student extends Person {
 //            , joinColumns = @JoinColumn(name = "student_id")
 //    )
 //    private List<String> nickNames = new ArrayList<>();
+
+
+    public Student() {
+        this.setRole("ROLE_STUDENT");
+    }
+
+    public Student(String firstName, String lastName, Boolean isMale, String email, String password, String phone, String mobile, Date dateOfBirth, Boolean isActive, StudyYear currentYear, Parent parent, Set<Attendance> attendance, Set<ExamResult> examResults, Set<Classroom> classrooms, Set<Course> courses) {
+        super(firstName, lastName, isMale, email, "ROLE_STUDENT", password, phone, mobile, dateOfBirth, isActive);
+        this.currentYear = currentYear;
+        this.parent = parent;
+        this.attendance = attendance;
+        this.examResults = examResults;
+        this.classrooms = classrooms;
+        this.courses = courses;
+    }
 }

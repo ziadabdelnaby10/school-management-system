@@ -1,4 +1,4 @@
-package com.ziad.school.service;
+package com.ziad.school.model.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

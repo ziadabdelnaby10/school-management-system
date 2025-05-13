@@ -8,29 +8,29 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.UUID;
 
 public interface StudentRepository extends JpaRepository<Student, UUID>, JpaSpecificationExecutor<Student> {
-    @Query("select (count(s) > 0) from Student s where s.email = ?1")
+    @Query("select (count(s) > 0) from t_student s where s.email = ?1")
     boolean existsByEmail(String email);
 
-    @Query("select s from Student s where s.email = ?1")
+    @Query("select s from t_student s where s.email = ?1")
     Student findByEmail(String email);
 
-    @Query("select count(s) from Student s where s.isMale = ?1")
+    @Query("select count(s) from t_student s where s.isMale = ?1")
     Long countAllByIsMale(Boolean isMale);
 
-    @Query("select count(s) from Student s")
+    @Query("select count(s) from t_student s")
     Long countAll();
 
-    @Query("select s from Student s left join fetch Attendance where s.id = ?1")
+    @Query("select s from t_student s left join fetch Attendance where s.id = ?1")
 //    @EntityGraph(attributePaths = {"attendance"})
     Student findStudentWithAttendances(UUID id);
 
-    @Query("select s from Student s left join fetch Parent where s.id = ?1")
+    @Query("select s from t_student s left join fetch t_parent where s.id = ?1")
     Student findStudentWithParent(UUID id);
 
-    @Query("select s from Student s left join fetch Course where s.id = ?1")
+    @Query("select s from t_student s left join fetch Course where s.id = ?1")
     Student findStudentWithCourses(UUID id);
 
-    @Query("select s from Student s left join fetch Classroom where s.id = ?1")
+    @Query("select s from t_student s left join fetch Classroom where s.id = ?1")
     Student findStudentWithClassrooms(UUID id);
 
 

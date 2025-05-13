@@ -26,7 +26,7 @@ public class CourseController {
         );
     }
 
-    @PostMapping("/add")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<CourseInfo> addCourse(@RequestBody AddCourseRequest request) {
         return new ApiResponse<>(

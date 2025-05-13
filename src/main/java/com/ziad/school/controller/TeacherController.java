@@ -2,7 +2,6 @@ package com.ziad.school.controller;
 
 import com.ziad.school.model.dto.TeacherInfo;
 import com.ziad.school.model.request.teacher.AddClassroomToTeacherRequest;
-import com.ziad.school.model.request.teacher.AddTeacherRequest;
 import com.ziad.school.model.response.ApiResponse;
 import com.ziad.school.service.TeacherService;
 import lombok.RequiredArgsConstructor;
@@ -22,14 +21,6 @@ public class TeacherController {
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<List<TeacherInfo>> getAllTeachers() {
         return new ApiResponse<>(HttpStatus.OK.value(), "Successfully retrived All Teachers", teacherService.getAllTeachers());
-    }
-
-    @PostMapping("/add")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<TeacherInfo> addTeacher(@RequestBody AddTeacherRequest request) {
-        return new ApiResponse<>(
-                HttpStatus.CREATED.value(), "Successfully added Teacher", teacherService.addTeacher(request)
-        );
     }
 
     @PostMapping("/add/classroom")

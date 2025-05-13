@@ -7,6 +7,6 @@ import java.util.UUID;
 
 public record AddCourseToStudentRequest(
         @NotNull(message = "Must Provide Student Id") @NotBlank(message = "Must Provide Student Id") UUID studentId,
-        @NotNull(message = "Must Provide Course Id") @NotBlank(message = "Must Provide Course Id") Long courseId
+        @NotNull(message = "Must Provide Course Id") @NotBlank(message = "Must Provide Course Id") String courseId
 ) {
 }

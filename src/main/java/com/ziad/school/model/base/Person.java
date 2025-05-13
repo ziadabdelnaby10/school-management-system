@@ -1,23 +1,25 @@
 package com.ziad.school.model.base;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.data.jpa.domain.AbstractPersistable;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Setter
 @Getter
-@MappedSuperclass
-public abstract class Person extends AbstractPersistable<UUID> implements Serializable {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "person_type")
+public abstract class Person extends AbstractPersistable<UUID> implements Serializable, UserDetails {
     // Read an article about using AbstractPerishable and AbstractAuditable
     // which is some common fields to use rather than creating it from the beginning
 
@@ -27,13 +29,17 @@ public abstract class Person extends AbstractPersistable<UUID> implements Serial
     @Column(nullable = false, length = 45)
     private String lastName;
 
-    @Column(nullable = false, unique = true, length = 45)
-    private String email;
-
     @Column
     private Boolean isMale;
 
-    @Column(nullable = false, length = 45)
+    @Column(nullable = false, unique = true, length = 45)
+    private String email;
+
+    @Column(nullable = false, updatable = false)
+    private String role;
+
+    @JsonIgnore
+    @Column(nullable = false)
     private String password;
 
     @Column(length = 15)
@@ -51,6 +57,21 @@ public abstract class Person extends AbstractPersistable<UUID> implements Serial
 
     //TODO think of adding this fields
     // lastLoginDate and lastLoginIp
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority(role));
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
 
     @Override
     public final boolean equals(Object o) {
