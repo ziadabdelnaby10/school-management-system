@@ -1,8 +1,9 @@
 package com.ziad.school.model.base;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.springframework.security.core.GrantedAuthority;
@@ -38,7 +39,7 @@ public abstract class Person extends AbstractPersistable<UUID> implements Serial
     @Column(nullable = false, updatable = false)
     private String role;
 
-    @JsonIgnore
+
     @Column(nullable = false)
     private String password;
 
@@ -54,6 +55,14 @@ public abstract class Person extends AbstractPersistable<UUID> implements Serial
 
     @Column
     private Boolean isActive;
+
+    @CreationTimestamp
+    @Column(updatable = false, name = "created_at")
+    private Date createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private Date updatedAt;
 
     //TODO think of adding this fields
     // lastLoginDate and lastLoginIp

@@ -64,8 +64,10 @@ public class Student extends Person {
         this.setRole("ROLE_STUDENT");
     }
 
-    public Student(String firstName, String lastName, Boolean isMale, String email, String password, String phone, String mobile, Date dateOfBirth, Boolean isActive, StudyYear currentYear, Parent parent, Set<Attendance> attendance, Set<ExamResult> examResults, Set<Classroom> classrooms, Set<Course> courses) {
-        super(firstName, lastName, isMale, email, "ROLE_STUDENT", password, phone, mobile, dateOfBirth, isActive);
+    public Student(String firstName, String lastName, Boolean isMale, String email, String password, String phone,
+                   String mobile, Date dateOfBirth, Boolean isActive, Date createdAt, Date updatedAt, StudyYear currentYear,
+                   Parent parent, Set<Attendance> attendance, Set<ExamResult> examResults, Set<Classroom> classrooms, Set<Course> courses) {
+        super(firstName, lastName, isMale, email, "ROLE_STUDENT", password, phone, mobile, dateOfBirth, isActive, createdAt, updatedAt);
         this.currentYear = currentYear;
         this.parent = parent;
         this.attendance = attendance;

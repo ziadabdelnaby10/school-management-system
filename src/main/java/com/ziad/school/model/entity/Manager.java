@@ -16,7 +16,7 @@ public class Manager extends Person {
         this.setRole("ROLE_MANAGER");
     }
 
-    public Manager(String firstName, String lastName, Boolean isMale, String email, String password, String phone, String mobile, Date dateOfBirth, Boolean isActive) {
-        super(firstName, lastName, isMale, email, "ROLE_MANAGER", password, phone, mobile, dateOfBirth, isActive);
+    public Manager(String firstName, String lastName, Boolean isMale, String email, String password, String phone, String mobile, Date dateOfBirth, Boolean isActive, Date createdAt, Date updatedAt) {
+        super(firstName, lastName, isMale, email, "ROLE_MANAGER", password, phone, mobile, dateOfBirth, isActive, createdAt, updatedAt);
     }
 }

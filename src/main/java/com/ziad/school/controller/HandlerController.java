@@ -67,14 +67,14 @@ public class HandlerController {
         );
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleException(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                new ApiResponse<>(
-                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                        "Sorry error happened",
-                        ex.getMessage()
-                )
-        );
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<?> handleException(Exception ex) {
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+//                new ApiResponse<>(
+//                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
+//                        "Sorry error happened",
+//                        ex.getMessage()
+//                )
+//        );
+//    }
 }

@@ -10,7 +10,8 @@ import com.ziad.school.model.response.StudentCoursesResponse;
 import com.ziad.school.model.response.StudentParentResponse;
 import org.mapstruct.*;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING,
+        uses = {
         AttendanceMapper.class, ParentMapper.class, ClassroomMapper.class, CourseMapper.class, SubjectMapper.class
 })
 public interface StudentMapper {

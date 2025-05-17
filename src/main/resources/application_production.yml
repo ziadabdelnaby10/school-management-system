@@ -30,3 +30,5 @@ springdoc:
 logging:
   level:
     org.springframework.security: error
+    sql: error
+    root: error

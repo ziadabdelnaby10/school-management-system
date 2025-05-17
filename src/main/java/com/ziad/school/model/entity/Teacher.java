@@ -2,7 +2,8 @@ package com.ziad.school.model.entity;
 
 import com.ziad.school.model.base.Person;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -28,8 +29,10 @@ public class Teacher extends Person {
         this.setRole("ROLE_TEACHER");
     }
 
-    public Teacher(String firstName, String lastName, Boolean isMale, String email, String password, String phone, String mobile, Date dateOfBirth, Boolean isActive, Set<Classroom> classrooms, Subject teachingSubject) {
-        super(firstName, lastName, isMale, email, "ROLE_TEACHER", password, phone, mobile, dateOfBirth, isActive);
+    public Teacher(String firstName, String lastName, Boolean isMale, String email,  String password, String phone, String mobile,
+                   Date dateOfBirth, Boolean isActive, Date createdAt, Date updatedAt, Set<Classroom> classrooms,
+                   Subject teachingSubject) {
+        super(firstName, lastName, isMale, email, "ROLE_TEACHER", password, phone, mobile, dateOfBirth, isActive, createdAt, updatedAt);
         this.classrooms = classrooms;
         this.teachingSubject = teachingSubject;
     }

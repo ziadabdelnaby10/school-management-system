@@ -1,10 +1,10 @@
 spring:
   application:
-    name: SchoolManagementSystem
+    name: ${SPRING_APP_NAME:SchoolManagementSystem}
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
@@ -21,6 +21,20 @@ spring:
   data:
     jdbc:
       dialect: mysql
+#  security:
+#    user:
+#      name: ${SECURITY_USERNAME:ziad}
+#      password: ${SECURITY_PASSWORD:12345}
+  config:
+    import: classpath:application_production.yml
+  profiles:
+    default: default
+server:
+  port: 1234
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
 #  main:
 #    allow-circular-references: true
 #  cache:
@@ -31,8 +45,6 @@ spring:
 #  level:
 #    sql: debug
 #    root: debug
-server:
-  port: 1234
-springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
+security.jwt.secret-key: 3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b
+  # 1h in millisecond
+security.jwt.expiration-time: 3600000
