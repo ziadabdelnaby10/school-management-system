@@ -1,0 +1,30 @@
+{
+  "name": "school-management-system",
+  "version": "1.0.0",
+  "description": "[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)\r [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?logo=springboot&logoColor=fff)](https://spring.io/projects/spring-boot)\r [![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://openjdk.org/projects/jdk/21/)",
+  "main": "index.js",
+  "scripts": {
+    "build": "tailwind -i ../school-management-system/src/main/resources/static/style.tailwind.css -o ../school-management-system/src/main/resources/static/main.css",
+    "watch": "tailwind --watch -i ../school-management-system/src/main/resources/static/style.tailwind.css -o ../school-management-system/src/main/resources/static/main.css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ziadabdelnaby10/school-management-system.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ziadabdelnaby10/school-management-system/issues"
+  },
+  "homepage": "https://github.com/ziadabdelnaby10/school-management-system#readme",
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
+    "postcss-cli": "^11.0.1",
+    "tailwindcss": "^3.4.17"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0"
+  }
+}

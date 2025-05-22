@@ -1,4 +1,4 @@
-package com.ziad.school.controller;
+package com.ziad.school.controller.rest;
 
 import com.ziad.school.model.dto.AttendanceInfo;
 import com.ziad.school.model.request.AddAttendanceRequest;

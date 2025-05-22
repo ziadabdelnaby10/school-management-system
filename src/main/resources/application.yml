@@ -33,6 +33,8 @@ spring:
 #    root: debug
 server:
   port: 1234
+  error:
+    path: /error
 springdoc:
   swagger-ui:
     path: /swagger-ui.html

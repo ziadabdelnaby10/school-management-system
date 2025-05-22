@@ -82,7 +82,7 @@ A modern school management system backend built with Spring Boot, featuring adva
    ```
 
 Access Swagger UI at: http://localhost:1234/swagger-ui.html
-
+For installing tailwind with thymeleaf: https://www.youtube.com/watch?v=6_6AIzxPXvQ 
 ## Project Structure
 
 ```
