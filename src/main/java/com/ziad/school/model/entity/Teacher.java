@@ -2,7 +2,8 @@ package com.ziad.school.model.entity;
 
 import com.ziad.school.model.base.Person;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 import java.util.HashSet;

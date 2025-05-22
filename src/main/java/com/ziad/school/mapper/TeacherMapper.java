@@ -4,7 +4,10 @@ import com.ziad.school.model.dto.TeacherInfo;
 import com.ziad.school.model.entity.Classroom;
 import com.ziad.school.model.entity.Teacher;
 import com.ziad.school.model.request.teacher.AddTeacherRequest;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.ReportingPolicy;
 
 import java.util.Set;
 import java.util.stream.Collectors;

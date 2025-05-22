@@ -8,7 +8,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +18,6 @@ import java.util.UUID;
 public class ParentService {
     private final ParentRepository parentRepository;
     private final ParentMapper parentMapper;
-    private final PasswordEncoder passwordEncoder;
 
     public List<ParentInfo> getAllParents() {
         return parentRepository.findAll().stream().map(parentMapper::toDto).toList();
@@ -34,10 +32,8 @@ public class ParentService {
     }
 
     public void createParent(AddParentRequest request) {
-        var hashPassword = passwordEncoder.encode(request.password());
         var newParent = parentMapper.toEntity(request);
         newParent.setIsActive(true);
-        newParent.setPassword(hashPassword);
         parentRepository.save(newParent);
     }
 

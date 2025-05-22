@@ -2,7 +2,6 @@ package com.ziad.school.model.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ziad.school.model.dto.ClassroomInfo;
-import com.ziad.school.model.dto.StudentInfo;
 
 import java.util.Date;
 import java.util.List;
