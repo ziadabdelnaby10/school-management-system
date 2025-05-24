@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/main.css">
+    <title>Students</title>
+</head>
+<body class="w-full mx-8">
+<div class="relative overflow-x-auto flex justify-center justify-items-center content-center">
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+            <th scope="col" class="px-6 py-3">First Name</th>
+            <th scope="col" class="px-6 py-3">Last Name</th>
+            <th scope="col" class="px-6 py-3">Email</th>
+            <th scope="col" class="px-6 py-3">Gender</th>
+            <th scope="col" class="px-6 py-3">Date Of Birth</th>
+            <th scope="col" class="px-6 py-3">Active?</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="student : ${studentsInfo}" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+            <td th:text="${student.getFirstName()}" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"></td>
+            <td th:text="${student.getLastName()}" class="px-6 py-4"></td>
+            <td th:text="${student.getEmail()}" class="px-6 py-4"></td>
+            <td th:text="${student.getIsMale() ? 'Male' : 'Female'}" class="px-6 py-4"></td>
+            <td th:text="${student.getDateOfBirth()}" class="px-6 py-4"></td>
+            <td th:text="${student.getIsActive()}" class="px-6 py-4"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
