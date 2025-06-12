@@ -17,6 +17,7 @@ public class ManagerService {
     public void addManager(AddManagerRequest manager){
         var hashPassword = passwordEncoder.encode(manager.password());
         var newManager = managerMapper.toEntity(manager);
+        newManager.setIsActive(Boolean.TRUE);
         newManager.setPassword(hashPassword);
         managerRepository.save(newManager);
     }

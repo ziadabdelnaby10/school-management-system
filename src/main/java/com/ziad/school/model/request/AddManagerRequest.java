@@ -33,7 +33,6 @@ public record AddManagerRequest(
         Boolean isMale,
         String phone,
         String mobile,
-        Date dateOfBirth,
-        Boolean isActive
+        Date dateOfBirth
 ) implements Serializable {
 }

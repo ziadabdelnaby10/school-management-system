@@ -1,5 +1,6 @@
 package com.ziad.school.controller;
 
+import com.ziad.school.config.SchoolUserDetailsService;
 import com.ziad.school.model.request.AddManagerRequest;
 import com.ziad.school.model.request.AddParentRequest;
 import com.ziad.school.model.request.student.AddStudentRequest;
@@ -12,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,6 +24,7 @@ public class UserController {
     private final ManagerService managerService;
     private final ParentService parentService;
     private final TeacherService teacherService;
+    private final SchoolUserDetailsService schoolUserDetailsService;
 
     @PostMapping("/student")
     @ResponseStatus(HttpStatus.CREATED)
@@ -65,5 +68,11 @@ public class UserController {
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+    }
+
+    @GetMapping("/login")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public ResponseEntity<String> login(Authentication authentication) {
+        return new ResponseEntity<>("Login Successfully", HttpStatus.ACCEPTED);
     }
 }
