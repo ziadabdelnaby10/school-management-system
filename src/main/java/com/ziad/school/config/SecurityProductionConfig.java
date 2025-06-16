@@ -16,20 +16,20 @@ import org.springframework.security.web.SecurityFilterChain;
 @Profile("production")
 public class SecurityProductionConfig {
 
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationEntryPoint authenticationEntryPoint) throws Exception {
-        http.requiresChannel(requiresChannel -> requiresChannel.anyRequest().requiresSecure())//For HTTPS
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(
-                        (requests) -> requests
-                                .requestMatchers("/api/users/**").permitAll()
-                                .anyRequest().authenticated()
-                )
-                .formLogin(Customizer.withDefaults())
-                .httpBasic(hbc -> hbc.authenticationEntryPoint(authenticationEntryPoint))
-                .exceptionHandling(ehc -> ehc.accessDeniedHandler(new CustomAccessDeniedHandler()).accessDeniedPage("/denied"));
-        return http.build();
-    }
+//    @Bean
+//    SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationEntryPoint authenticationEntryPoint) throws Exception {
+//        http.requiresChannel(requiresChannel -> requiresChannel.anyRequest().requiresSecure())//For HTTPS
+//                .csrf(AbstractHttpConfigurer::disable)
+//                .authorizeHttpRequests(
+//                        (requests) -> requests
+//                                .requestMatchers("/api/users/**").permitAll()
+//                                .anyRequest().authenticated()
+//                )
+//                .formLogin(Customizer.withDefaults())
+//                .httpBasic(hbc -> hbc.authenticationEntryPoint(authenticationEntryPoint))
+//                .exceptionHandling(ehc -> ehc.accessDeniedHandler(new CustomAccessDeniedHandler()).accessDeniedPage("/denied"));
+//        return http.build();
+//    }
 
 //    @Bean
 //    UserDetailsService userDetailsService(DataSource dataSource) {
@@ -40,10 +40,10 @@ public class SecurityProductionConfig {
 //        return new JdbcUserDetailsManager(dataSource);
 //    }
 
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
+//    @Bean
+//    PasswordEncoder passwordEncoder() {
+//        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+//    }
 
 //    @Bean
 //    public CompromisedPasswordChecker compromisedPasswordChecker() {

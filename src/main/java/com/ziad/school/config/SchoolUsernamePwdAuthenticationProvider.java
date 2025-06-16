@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class SchoolUsernamePwdAuthenticationProvider implements AuthenticationProvider {
 
-    private final UserDetailsService userDetailsService;
+    private final SchoolUserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
 
     @Override

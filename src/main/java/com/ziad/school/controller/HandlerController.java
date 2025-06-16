@@ -5,11 +5,11 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;
 
@@ -66,6 +66,18 @@ public class HandlerController {
                 )
         );
     }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                new ApiResponse<>(
+                        HttpStatus.FOUND.value(),
+                        "User Is No Authorized",
+                        ex.getMessage()
+                )
+        );
+    }
+
 
 //    @ExceptionHandler(Exception.class)
 //    public ResponseEntity<?> handleException(Exception ex) {
