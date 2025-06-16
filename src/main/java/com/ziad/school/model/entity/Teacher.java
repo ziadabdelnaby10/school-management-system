@@ -1,6 +1,7 @@
 package com.ziad.school.model.entity;
 
 import com.ziad.school.model.base.Person;
+import com.ziad.school.model.base.SystemRole;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,13 +27,13 @@ public class Teacher extends Person {
     private Subject teachingSubject;
 
     public Teacher() {
-        this.setRole("ROLE_TEACHER");
+        this.setRole(SystemRole.ROLE_TEACHER.toString());
     }
 
     public Teacher(String firstName, String lastName, Boolean isMale, String email,  String password, String phone, String mobile,
                    Date dateOfBirth, Boolean isActive, Date createdAt, Date updatedAt, Set<Classroom> classrooms,
                    Subject teachingSubject) {
-        super(firstName, lastName, isMale, email, "ROLE_TEACHER", password, phone, mobile, dateOfBirth, isActive, createdAt, updatedAt);
+        super(firstName, lastName, isMale, email, SystemRole.ROLE_TEACHER.toString(), password, phone, mobile, dateOfBirth, isActive, createdAt, updatedAt);
         this.classrooms = classrooms;
         this.teachingSubject = teachingSubject;
     }

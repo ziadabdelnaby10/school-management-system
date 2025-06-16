@@ -1,6 +1,7 @@
 package com.ziad.school.model.entity;
 
 import com.ziad.school.model.base.Person;
+import com.ziad.school.model.base.SystemRole;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -22,11 +23,11 @@ public class Parent extends Person {
     private Set<Student> student = new HashSet<>();
 
     public Parent() {
-        this.setRole("ROLE_PARENT");
+        this.setRole(SystemRole.ROLE_PARENT.toString());
     }
 
     public Parent(String firstName, String lastName, Boolean isMale, String email, String password, String phone, String mobile, Date dateOfBirth, Boolean isActive, Date createdAt, Date updatedAt, Set<Student> student) {
-        super(firstName, lastName, isMale, email, "ROLE_PARENT", password, phone, mobile, dateOfBirth, isActive, createdAt, updatedAt);
+        super(firstName, lastName, isMale, email, SystemRole.ROLE_PARENT.toString(), password, phone, mobile, dateOfBirth, isActive, createdAt, updatedAt);
         this.student = student;
     }
 }
