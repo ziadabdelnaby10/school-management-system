@@ -10,7 +10,7 @@ import static org.springframework.data.web.config.EnableSpringDataWebSupport.Pag
 @SpringBootApplication
 //@EnableCaching
 @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO)//For a Stable JSON Structure when requesting Paginated data
-//@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = true)
 public class SchoolManagementSystemApplication {
 //    String[] fNames = {"Ziad", "Ahmed", "Mohamed", "Andrew", "Scott", "Marwan", "Mazen", "Ramy", "Malek", "Rana", "Esraa", "Samira", "Mawda", "Samya", "Loka", "Knda", "Ali", "Aser", "Mostafa", "Hamada", "Amanda", "Wilson", "Sam", "Remy", "Lala"};
 //    String[] lNames = {"Ziad", "Ahmed", "Mohamed", "Andrew", "Scott", "Marwan", "Mazen", "Ramy", "Malek", "Loka", "Ali", "Aser", "Mostafa", "Hamada"};

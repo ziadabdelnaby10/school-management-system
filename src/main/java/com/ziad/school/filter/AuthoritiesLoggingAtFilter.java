@@ -1,10 +1,12 @@
-package com.ziad.school.config;
+package com.ziad.school.filter;
 
 import jakarta.servlet.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+@Component
 @Slf4j
 public class AuthoritiesLoggingAtFilter implements Filter {
     @Override

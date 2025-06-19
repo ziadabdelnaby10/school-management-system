@@ -1,5 +1,6 @@
 package com.ziad.school.exceptionhandling;
 
+import com.ziad.school.utils.SchoolConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,7 +20,7 @@ public class CustomBasicAuthenticationEntryPoint implements AuthenticationEntryP
         String message = (authException != null && authException.getMessage() != null) ? authException.getMessage()
                 : "Unauthorized";
         String path = request.getRequestURI();
-        response.setHeader("school-error-reason","Authentication Failed");
+        response.setHeader(SchoolConstants.SCHOOL_Unauthorized_REASON,"Unauthorized");
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json;charset=UTF-8");
 

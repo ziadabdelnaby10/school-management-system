@@ -72,7 +72,7 @@ public class HandlerController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
                 new ApiResponse<>(
                         HttpStatus.FOUND.value(),
-                        "User Is No Authorized",
+                        "User Is Not Authorized",
                         ex.getMessage()
                 )
         );

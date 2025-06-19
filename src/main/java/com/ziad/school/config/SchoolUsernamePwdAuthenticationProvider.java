@@ -19,9 +19,9 @@ public class SchoolUsernamePwdAuthenticationProvider implements AuthenticationPr
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String username = authentication.getName();
+        String email = authentication.getName();
         String password = authentication.getCredentials().toString();
-        var userDetails = userDetailsService.loadUserByUsername(username);
+        var userDetails = userDetailsService.loadUserByUsername(email);
         if (passwordEncoder.matches(password, userDetails.getPassword())) {
             return new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
         }else {

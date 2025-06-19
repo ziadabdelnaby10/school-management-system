@@ -1,21 +1,26 @@
 package com.ziad.school.controller;
 
-import com.ziad.school.config.SchoolUserDetailsService;
 import com.ziad.school.model.request.AddManagerRequest;
 import com.ziad.school.model.request.AddParentRequest;
+import com.ziad.school.model.request.UserLoginRequest;
 import com.ziad.school.model.request.student.AddStudentRequest;
 import com.ziad.school.model.request.teacher.AddTeacherRequest;
-import com.ziad.school.service.ManagerService;
-import com.ziad.school.service.ParentService;
-import com.ziad.school.service.StudentService;
-import com.ziad.school.service.TeacherService;
+import com.ziad.school.model.response.AuthenticationResponse;
+import com.ziad.school.service.*;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
@@ -24,7 +29,9 @@ public class UserController {
     private final ManagerService managerService;
     private final ParentService parentService;
     private final TeacherService teacherService;
-    private final SchoolUserDetailsService schoolUserDetailsService;
+
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenService jwtTokenService;
 
     @PostMapping("/student")
     @ResponseStatus(HttpStatus.CREATED)
@@ -32,7 +39,7 @@ public class UserController {
         try {
             studentService.createStudent(request);
             return new ResponseEntity<>("Student Created Successfully", HttpStatus.CREATED);
-        }catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
@@ -43,7 +50,7 @@ public class UserController {
         try {
             managerService.addManager(manager);
             return new ResponseEntity<>("Manager Created Successfully", HttpStatus.CREATED);
-        }catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
@@ -54,7 +61,7 @@ public class UserController {
         try {
             teacherService.addTeacher(request);
             return new ResponseEntity<>("Teacher Created Successfully", HttpStatus.CREATED);
-        }catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
@@ -65,14 +72,25 @@ public class UserController {
         try {
             parentService.createParent(request);
             return new ResponseEntity<>("Parent Created Successfully", HttpStatus.CREATED);
-        }catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
     @GetMapping("/login")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseEntity<String> login(Authentication authentication) {
-        return new ResponseEntity<>("Login Successfully", HttpStatus.ACCEPTED);
+    public ResponseEntity<?> login(@RequestBody @Valid @NotNull UserLoginRequest loginRequest) {
+        log.info("The User in login endpoint : {}", loginRequest != null ? loginRequest.toString() : "NONE");
+
+        StringBuilder jwt = new StringBuilder();
+        var authentication = UsernamePasswordAuthenticationToken.unauthenticated(loginRequest.email(), loginRequest.password());
+        var authenticationResponse = authenticationManager.authenticate(authentication);
+
+        if (authenticationResponse != null && authenticationResponse.isAuthenticated()) {
+            log.debug("The User Details : {}", authenticationResponse.getName() + " " + authenticationResponse.getAuthorities());
+            jwt.insert(0, jwtTokenService.generateToken(authenticationResponse.getName() , authenticationResponse.getAuthorities()));
+        }
+
+        return new ResponseEntity<>(new AuthenticationResponse(new Date(), "Bearer", jwt.toString(), 123L), HttpStatus.ACCEPTED);
     }
 }
