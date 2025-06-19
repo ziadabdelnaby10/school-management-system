@@ -8,14 +8,15 @@ import com.ziad.school.model.response.StudentAttendanceResponse;
 import com.ziad.school.model.response.StudentClassroomsResponse;
 import com.ziad.school.model.response.StudentCoursesResponse;
 import com.ziad.school.model.response.StudentParentResponse;
-import com.ziad.school.repository.*;
+import com.ziad.school.repository.ClassroomRepository;
+import com.ziad.school.repository.CourseRepository;
+import com.ziad.school.repository.ParentRepository;
+import com.ziad.school.repository.StudentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.UUID;
 
 @Service
@@ -24,15 +25,12 @@ public class StudentService {
     private final StudentRepository studentRepository;
     private final StudentMapper studentMapper;
     private final ParentRepository parentRepository;
-    private final AttendanceRepository attendanceRepository;
     private final ClassroomRepository classroomRepository;
     private final CourseRepository courseRepository;
-    private final PasswordEncoder passwordEncoder;
 
     public Page<StudentInfo> getAllStudents(Pageable pageable) {
         var students = studentRepository.findAll(pageable);
-        var mappedStudents = students.map(studentMapper::toDto);
-        return mappedStudents;
+        return students.map(studentMapper::toDto);
     }
 
     //    @Cacheable(value = "student" , key = "#id")
@@ -41,9 +39,7 @@ public class StudentService {
     }
 
     public void createStudent(AddStudentRequest student) {
-        var hashPassword = passwordEncoder.encode(student.password());
         var newStudent = studentMapper.toEntity(student);
-        newStudent.setPassword(hashPassword);
         newStudent.setIsActive(Boolean.TRUE);
         studentRepository.save(newStudent);
     }

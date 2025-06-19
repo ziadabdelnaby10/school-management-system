@@ -1,11 +1,7 @@
 package com.ziad.school.repository;
 
 import com.ziad.school.model.entity.Attendance;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-
-import java.util.List;
 
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 //    @EntityGraph(attributePaths = {"student"})

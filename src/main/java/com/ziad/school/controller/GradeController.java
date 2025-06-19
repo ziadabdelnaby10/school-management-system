@@ -1,8 +1,8 @@
 package com.ziad.school.controller;
 
 import com.ziad.school.model.dto.GradeInfo;
-import com.ziad.school.model.response.ApiResponse;
 import com.ziad.school.model.request.AddGradeRequest;
+import com.ziad.school.model.response.ApiResponse;
 import com.ziad.school.service.GradeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

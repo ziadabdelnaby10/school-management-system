@@ -1,7 +1,10 @@
 package com.ziad.school.controller;
 
 import com.ziad.school.model.dto.StudentInfo;
-import com.ziad.school.model.request.student.*;
+import com.ziad.school.model.request.student.AddClassroomToStudentRequest;
+import com.ziad.school.model.request.student.AddCourseToStudentRequest;
+import com.ziad.school.model.request.student.AddStudentToParentRequest;
+import com.ziad.school.model.request.student.UpdateStudentRequest;
 import com.ziad.school.model.response.*;
 import com.ziad.school.service.StudentService;
 import jakarta.validation.Valid;

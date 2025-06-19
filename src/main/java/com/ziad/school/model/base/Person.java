@@ -6,12 +6,11 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.data.jpa.domain.AbstractPersistable;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Date;
+import java.util.Objects;
+import java.util.UUID;
 
 @Setter
 @Getter
@@ -20,7 +19,7 @@ import java.util.*;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "person_type")
-public abstract class Person extends AbstractPersistable<UUID> implements Serializable, UserDetails {
+public abstract class Person extends AbstractPersistable<UUID> implements Serializable {
     // Read an article about using AbstractPerishable and AbstractAuditable
     // which is some common fields to use rather than creating it from the beginning
 
@@ -67,20 +66,6 @@ public abstract class Person extends AbstractPersistable<UUID> implements Serial
     //TODO think of adding this fields
     // lastLoginDate and lastLoginIp
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(role));
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
 
     @Override
     public final boolean equals(Object o) {

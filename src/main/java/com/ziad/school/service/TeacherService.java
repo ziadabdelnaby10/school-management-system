@@ -1,14 +1,13 @@
 package com.ziad.school.service;
 
-import com.ziad.school.model.request.teacher.AddClassroomToTeacherRequest;
 import com.ziad.school.mapper.TeacherMapper;
 import com.ziad.school.model.dto.TeacherInfo;
+import com.ziad.school.model.request.teacher.AddClassroomToTeacherRequest;
 import com.ziad.school.model.request.teacher.AddTeacherRequest;
 import com.ziad.school.repository.ClassroomRepository;
 import com.ziad.school.repository.TeacherRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,17 +19,14 @@ public class TeacherService {
     private final TeacherRepository teacherRepository;
     private final TeacherMapper teacherMapper;
     private final ClassroomRepository classroomRepository;
-    private final PasswordEncoder passwordEncoder;
 
     public List<TeacherInfo> getAllTeachers() {
         return teacherRepository.findAll().stream().map(teacherMapper::toDto).toList();
     }
 
     public void addTeacher(AddTeacherRequest request) {
-        var hashPassword = passwordEncoder.encode(request.password());
         var requestTeacher = teacherMapper.toEntity(request);
         requestTeacher.setIsActive(true);
-        requestTeacher.setPassword(hashPassword);
         teacherRepository.save(requestTeacher);
     }
 
