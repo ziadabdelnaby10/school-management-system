@@ -14,10 +14,10 @@ import java.util.Date;
 public class Manager extends Person {
 
     public Manager() {
-        this.setRole(SystemRole.ROLE_MANAGER.toString());
+        this.setRole(SystemRole.MANAGER.toString());
     }
 
     public Manager(String firstName, String lastName, Boolean isMale, String email, String password, String phone, String mobile, Date dateOfBirth, Boolean isActive, Date createdAt, Date updatedAt) {
-        super(firstName, lastName, isMale, email, SystemRole.ROLE_MANAGER.toString(), password, phone, mobile, dateOfBirth, isActive, createdAt, updatedAt);
+        super(firstName, lastName, isMale, email, SystemRole.MANAGER.toString(), password, phone, mobile, dateOfBirth, isActive, createdAt, updatedAt);
     }
 }

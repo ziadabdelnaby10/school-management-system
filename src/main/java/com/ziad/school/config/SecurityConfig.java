@@ -1,8 +1,11 @@
 package com.ziad.school.config;
 
 import com.ziad.school.exceptionhandling.CustomAccessDeniedHandler;
-import com.ziad.school.exceptionhandling.CustomBasicAuthenticationEntryPoint;
-import com.ziad.school.filter.*;
+import com.ziad.school.exceptionhandling.CustomBasicAuthenticationEntryPointHandler;
+import com.ziad.school.filter.AuthoritiesLoggingAfterFilter;
+import com.ziad.school.filter.AuthoritiesLoggingAtFilter;
+import com.ziad.school.filter.CSRFCookieFilter;
+import com.ziad.school.filter.JWTTokenValidatorFilter;
 import com.ziad.school.model.base.SystemRole;
 import com.ziad.school.repository.PersonRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +18,6 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -34,19 +36,20 @@ public class SecurityConfig {
     //This is a Reminder that this instructions inspired by the spring security course
     //This was build first for mvc to continue in mvc go to the course section 7 the part where the login starts
 
-    private final PersonRepository personRepository;
-
-    private final CustomBasicAuthenticationEntryPoint customBasicAuthenticationEntryPoint;
-
-    private final AuthenticationEntryPoint authenticationEntryPoint;
-
-    private final CustomAccessDeniedHandler customAccessDeniedHandler;
-
     /**
      * Configures the Spring Security filter chain for the application.
      * It sets up authentication, authorization rules, CSRF protection, custom filters, CORS, and exception handling.
      *
      * @param http The HttpSecurity object used to configure security for HTTP requests.
+     * @param csrfCookieFilter
+     * @param jwtTokenValidatorFilter
+     * @param authoritiesLoggingAfterFilter
+     * @param authoritiesLoggingAtFilter
+     * @param schoolUserDetailsService
+     * @param schoolUsernamePwdAuthenticationProvider
+     * @param customBasicAuthenticationEntryPointHandler
+     * @param authenticationEntryPoint
+     * @param customAccessDeniedHandler
      * @return The configured SecurityFilterChain bean.
      * @throws Exception if an error occurs during configuration.
      */
@@ -54,13 +57,14 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             CSRFCookieFilter csrfCookieFilter,
-            RequestValidationBeforeFilter requestValidationBeforeFilter,
             JWTTokenValidatorFilter jwtTokenValidatorFilter,
-            JWTTokenGeneratorFilter jwtTokenGeneratorFilter,
             AuthoritiesLoggingAfterFilter authoritiesLoggingAfterFilter,
             AuthoritiesLoggingAtFilter authoritiesLoggingAtFilter,
             SchoolUserDetailsService schoolUserDetailsService,
-            SchoolUsernamePwdAuthenticationProvider schoolUsernamePwdAuthenticationProvider
+            SchoolUsernamePwdAuthenticationProvider schoolUsernamePwdAuthenticationProvider,
+            CustomBasicAuthenticationEntryPointHandler customBasicAuthenticationEntryPointHandler,
+            AuthenticationEntryPoint authenticationEntryPoint,
+            CustomAccessDeniedHandler customAccessDeniedHandler
     ) throws Exception {
 
         // Define path patterns for role-based access
@@ -71,8 +75,6 @@ public class SecurityConfig {
         var anyTeacher = new String[]{"/api/teachers/**"};
         var swagger = new String[]{"/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/api-docs/**"};
 
-        // CSRF handler to support token as a request attribute
-        CsrfTokenRequestAttributeHandler csrfTokenRequestAttributeHandler = new CsrfTokenRequestAttributeHandler();
 
         http
                 // Use custom user details service and authentication provider
@@ -80,7 +82,7 @@ public class SecurityConfig {
                 .authenticationProvider(schoolUsernamePwdAuthenticationProvider)
 
                 // Save the SecurityContext on authentication (even for stateless sessions)
-//                .securityContext(contextConfig -> contextConfig.requireExplicitSave(false))
+                .securityContext(contextConfig -> contextConfig.requireExplicitSave(false))
 
                 // Session management policy - session will always be created
                 .sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -99,7 +101,8 @@ public class SecurityConfig {
 
                 // CSRF configuration
                 .csrf(csrfConfig -> csrfConfig
-                        .csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)
+                        // CSRF handler to support token as a request attribute
+                        .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
                         .ignoringRequestMatchers(anyUser)
                         .ignoringRequestMatchers(swagger)
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
@@ -118,10 +121,10 @@ public class SecurityConfig {
                 // Authorization rules for different user roles
                 .authorizeHttpRequests(
                         (requests) -> requests
-                                .requestMatchers(anyAdmin).hasAuthority(SystemRole.ROLE_MANAGER.toString())
-                                .requestMatchers(anyStudent).hasAuthority(SystemRole.ROLE_STUDENT.toString())
-                                .requestMatchers(anyParent).hasAuthority(SystemRole.ROLE_PARENT.toString())
-                                .requestMatchers(anyTeacher).hasAuthority(SystemRole.ROLE_TEACHER.toString())
+                                .requestMatchers(anyAdmin).hasAuthority(SystemRole.MANAGER.toString())
+                                .requestMatchers(anyStudent).hasAuthority(SystemRole.STUDENT.toString())
+                                .requestMatchers(anyParent).hasAuthority(SystemRole.PARENT.toString())
+                                .requestMatchers(anyTeacher).hasAuthority(SystemRole.TEACHER.toString())
                                 .requestMatchers(swagger).permitAll()
                                 .requestMatchers(anyUser).permitAll()
                                 .anyRequest().authenticated()
@@ -136,7 +139,7 @@ public class SecurityConfig {
                 // Exception handling with custom handlers
                 .exceptionHandling(ehc -> ehc
                         .accessDeniedHandler(customAccessDeniedHandler)
-                        .authenticationEntryPoint(customBasicAuthenticationEntryPoint)
+                        .authenticationEntryPoint(customBasicAuthenticationEntryPointHandler)
                 );
 
         // Build and return the security filter chain
@@ -144,7 +147,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    SchoolUserDetailsService schoolUserDetailsService() {
+    SchoolUserDetailsService schoolUserDetailsService(PersonRepository personRepository) {
         return new SchoolUserDetailsService(personRepository);
     }
 

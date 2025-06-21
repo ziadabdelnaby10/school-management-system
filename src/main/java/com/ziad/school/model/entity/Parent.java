@@ -23,11 +23,11 @@ public class Parent extends Person {
     private Set<Student> student = new HashSet<>();
 
     public Parent() {
-        this.setRole(SystemRole.ROLE_PARENT.toString());
+        this.setRole(SystemRole.PARENT.toString());
     }
 
     public Parent(String firstName, String lastName, Boolean isMale, String email, String password, String phone, String mobile, Date dateOfBirth, Boolean isActive, Date createdAt, Date updatedAt, Set<Student> student) {
-        super(firstName, lastName, isMale, email, SystemRole.ROLE_PARENT.toString(), password, phone, mobile, dateOfBirth, isActive, createdAt, updatedAt);
+        super(firstName, lastName, isMale, email, SystemRole.PARENT.toString(), password, phone, mobile, dateOfBirth, isActive, createdAt, updatedAt);
         this.student = student;
     }
 }
