@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 @Component
-public class CustomBasicAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class CustomBasicAuthenticationEntryPointHandler implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         LocalDateTime currentTimeStamp = LocalDateTime.now();

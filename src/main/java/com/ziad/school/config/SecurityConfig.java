@@ -1,10 +1,8 @@
 package com.ziad.school.config;
 
 import com.ziad.school.exceptionhandling.CustomAccessDeniedHandler;
-import com.ziad.school.exceptionhandling.CustomBasicAuthenticationEntryPoint;
+import com.ziad.school.exceptionhandling.CustomBasicAuthenticationEntryPointHandler;
 import com.ziad.school.model.base.SystemRole;
-import com.ziad.school.repository.PersonRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +18,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 
 @RequiredArgsConstructor
 @Configuration
@@ -29,11 +26,9 @@ public class SecurityConfig {
     //This is a Reminder that this instructions inspired by the spring security course
     //This was build first for mvc to continue in mvc go to the course section 7 the part where the login starts
 
-    private final CustomBasicAuthenticationEntryPoint customBasicAuthenticationEntryPoint;
+    private final CustomBasicAuthenticationEntryPointHandler customBasicAuthenticationEntryPointHandler;
 
     private final AuthenticationEntryPoint authenticationEntryPoint;
-
-    private final PersonRepository personRepository;
 
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
@@ -47,7 +42,15 @@ public class SecurityConfig {
      * @throws Exception if an error occurs during configuration.
      */
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            CSRFCookieFilter csrfCookieFilter,
+            RequestValidationBeforeFilter requestValidationBeforeFilter,
+            AuthoritiesLoggingAfterFilter authoritiesLoggingAfterFilter,
+            AuthoritiesLoggingAtFilter authoritiesLoggingAtFilter,
+            SchoolUserDetailsService schoolUserDetailsService,
+            SchoolUsernamePwdAuthenticationProvider schoolUsernamePwdAuthenticationProvider
+    ) throws Exception {
 
         // Define path patterns for role-based access
         var anyUser = new String[]{"/api/users/**"};
@@ -57,13 +60,10 @@ public class SecurityConfig {
         var anyTeacher = new String[]{"/api/teachers/**"};
         var swagger = new String[]{"/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/api-docs/**"};
 
-        // CSRF handler to support token as a request attribute
-        CsrfTokenRequestAttributeHandler csrfTokenRequestAttributeHandler = new CsrfTokenRequestAttributeHandler();
-
         http
                 // Use custom user details service and authentication provider
-                .userDetailsService(schoolUserDetailsService())
-                .authenticationProvider(schoolUsernamePwdAuthenticationProvider())
+                .userDetailsService(schoolUserDetailsService)
+                .authenticationProvider(schoolUsernamePwdAuthenticationProvider)
 
                 // Save the SecurityContext on authentication (even for stateless sessions)
                 .securityContext(contextConfig -> contextConfig.requireExplicitSave(false))
@@ -72,31 +72,29 @@ public class SecurityConfig {
                 .sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
 
                 // CORS configuration to allow all origins, headers, and methods
-                .cors(corsConfig -> corsConfig.configurationSource(new CorsConfigurationSource() {
-                    @Override
-                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-                        var config = new CorsConfiguration();
-                        config.setAllowCredentials(true);
-                        config.addAllowedOrigin("*");
-                        config.addAllowedHeader("*");
-                        config.addAllowedMethod("*");
-                        config.setMaxAge(3600L);
-                        return config;
-                    }
+                .cors(corsConfig -> corsConfig.configurationSource(request -> {
+                    var config = new CorsConfiguration();
+                    config.setAllowCredentials(true);
+                    config.addAllowedOrigin("*");
+                    config.addAllowedHeader("*");
+                    config.addAllowedMethod("*");
+                    config.setMaxAge(3600L);
+                    return config;
                 }))
 
                 // CSRF configuration
                 .csrf(csrfConfig -> csrfConfig
-                        .csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)
+                        // CSRF handler to support token as a request attribute
+                        .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
                         .ignoringRequestMatchers(anyUser)
                         .ignoringRequestMatchers(swagger)
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
 
                 // Add custom security filters
-                .addFilterAfter(new CSRFCookieFilter(), BasicAuthenticationFilter.class)
-                .addFilterBefore(new RequestValidationBeforeFilter(), BasicAuthenticationFilter.class)
-                .addFilterAfter(new AuthoritiesLoggingAfterFilter(), BasicAuthenticationFilter.class)
-                .addFilterAt(new AuthoritiesLoggingAtFilter(), BasicAuthenticationFilter.class)
+                .addFilterAfter(csrfCookieFilter, BasicAuthenticationFilter.class)
+                .addFilterBefore(requestValidationBeforeFilter, BasicAuthenticationFilter.class)
+                .addFilterAfter(authoritiesLoggingAfterFilter, BasicAuthenticationFilter.class)
+                .addFilterAt(authoritiesLoggingAtFilter, BasicAuthenticationFilter.class)
 
                 // Require HTTP (non-HTTPS) channel for all requests
                 .requiresChannel(requiresChannel -> requiresChannel.anyRequest().requiresInsecure())//For HTTP
@@ -122,21 +120,11 @@ public class SecurityConfig {
                 // Exception handling with custom handlers
                 .exceptionHandling(ehc -> ehc
                         .accessDeniedHandler(customAccessDeniedHandler)
-                        .authenticationEntryPoint(customBasicAuthenticationEntryPoint)
+                        .authenticationEntryPoint(customBasicAuthenticationEntryPointHandler)
                 );
 
         // Build and return the security filter chain
         return http.build();
-    }
-
-    @Bean
-    SchoolUserDetailsService schoolUserDetailsService() {
-        return new SchoolUserDetailsService(personRepository);
-    }
-
-    @Bean
-    SchoolUsernamePwdAuthenticationProvider schoolUsernamePwdAuthenticationProvider() {
-        return new SchoolUsernamePwdAuthenticationProvider(schoolUserDetailsService(), passwordEncoder());
     }
 
     @Bean
