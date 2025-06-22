@@ -1,5 +1,6 @@
 package com.ziad.school.exceptionhandling;
 
+import com.ziad.school.utils.SchoolConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,14 +13,14 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 @Component
-public class CustomBasicAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class CustomBasicAuthenticationEntryPointHandler implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         LocalDateTime currentTimeStamp = LocalDateTime.now();
         String message = (authException != null && authException.getMessage() != null) ? authException.getMessage()
                 : "Unauthorized";
         String path = request.getRequestURI();
-        response.setHeader("school-error-reason","Authentication Failed");
+        response.setHeader(SchoolConstants.SCHOOL_Unauthorized_REASON,"Unauthorized");
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json;charset=UTF-8");
 

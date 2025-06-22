@@ -1,5 +1,6 @@
 package com.ziad.school.exceptionhandling;
 
+import com.ziad.school.utils.SchoolConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,7 +21,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         String message = (accessDeniedException != null && accessDeniedException.getMessage() != null) ? accessDeniedException.getMessage()
                 : "Authentication Failed";
         String path = request.getRequestURI();
-        response.setHeader("school-denied-reason", "Authentication Failed");
+        response.setHeader(SchoolConstants.SCHOOL_DENIED_REASON, "Authentication Failed");
         response.setStatus(HttpStatus.FORBIDDEN.value());
         response.setContentType("application/json;charset=UTF-8");
 
