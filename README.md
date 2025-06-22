@@ -8,6 +8,39 @@ A modern school management system backend built with Spring Boot, featuring adva
 
 **Note**: This project i am building so i could train on some spring boot technologies so this main branch will be the core project and every time i will train on new topic i will create a branch for it
 
+## Project Structure
+
+This project uses multiple branches to separate different security implementations while maintaining a stable core:
+
+```mermaid
+graph TD
+    A[main]-->B[basic-security];
+    B-->C[jwt-security];
+    B-->D[oauth2-security];
+```
+
+### Branches
+- [![Main Branch](https://img.shields.io/badge/Main-Core-brightgreen)](https://github.com/ziadabdelnaby10/school-management-system/tree/main)    
+  Contains the foundational implementation:
+  - JPA entity modeling
+  - Repository interfaces
+  - REST API endpoints
+  - Core business logic
+
+- [![Basic Security](https://img.shields.io/badge/Branch-Basic_Security-blue)](https://github.com/ziadabdelnaby10/school-management-system/tree/basic-security)      
+  Implements:
+  - Spring Security with Basic Auth
+  - Role-based access control
+  - In-memory user credentials
+  - Secured endpoints
+
+- [![JWT Security](https://img.shields.io/badge/Branch-JWT_Security-orange)](https://github.com/ziadabdelnaby10/school-management-system/tree/jwt-security)  
+  Implements:
+  - JWT authentication flow
+  - Token generation/validation
+  - Stateless security
+  - Refresh token support
+
 ## Features
 
 - **Core Management Modules**:

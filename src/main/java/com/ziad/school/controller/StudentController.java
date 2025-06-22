@@ -24,16 +24,6 @@ import java.util.UUID;
 public class StudentController {
     private final StudentService studentService;
 
-//    @GetMapping
-//    @ResponseStatus(HttpStatus.OK)
-//    public ApiResponse<List<StudentInfo>> getAllStudents() {
-//        return new ApiResponse<>(
-//                HttpStatus.OK.value(),
-//                "Successfully retrieved all students",
-//                studentService.getAllStudents()
-//        );
-//    }
-
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Page<StudentInfo> getAllStudents(Pageable page) {
