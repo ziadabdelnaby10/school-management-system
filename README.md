@@ -1,294 +1,169 @@
-# School Management System
+# School Management System - Basic Authentication
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?logo=springboot&logoColor=fff)](https://spring.io/projects/spring-boot)
-[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://openjdk.org/projects/jdk/21/)
+This branch implements Spring Security with Basic Authentication on top of the core application from the [`main` branch](https://github.com/ziadabdelnaby10/school-management-system/tree/main).
 
-A modern school management system backend built with Spring Boot, featuring advanced JPA/Hibernate techniques, robust API documentation, and efficient data mapping.
+## 🔒 Security Implementation
 
-**Note**: This project i am building so i could train on some spring boot technologies so this main branch will be the core project and every time i will train on new topic i will create a branch for it
+### Features
+- Spring Security with Basic Authentication
+- Role-based access control (ADMIN/USER)
+- In-memory user credential storage
+- Password encoding with BCrypt
+- Secured REST API endpoints
 
-## Project Structure
+### Security Configuration
+The security setup is configured in `SecurityConfig.java`:
 
-This project uses multiple branches to separate different security implementations while maintaining a stable core:
-
-```mermaid
-graph TD
-    A[main]-->B[basic-security];
-    B-->C[jwt-security];
-    B-->D[oauth2-security];
-```
-
-### Branches
-- [![Main Branch](https://img.shields.io/badge/Main-Core-brightgreen)](https://github.com/ziadabdelnaby10/school-management-system/tree/main)    
-  Contains the foundational implementation:
-  - JPA entity modeling
-  - Repository interfaces
-  - REST API endpoints
-  - Core business logic
-
-- [![Basic Security](https://img.shields.io/badge/Branch-Basic_Security-blue)](https://github.com/ziadabdelnaby10/school-management-system/tree/basic-security)      
-  Implements:
-  - Spring Security with Basic Auth
-  - Role-based access control
-  - In-memory user credentials
-  - Secured endpoints
-
-- [![JWT Security](https://img.shields.io/badge/Branch-JWT_Security-orange)](https://github.com/ziadabdelnaby10/school-management-system/tree/jwt-security)  
-  Implements:
-  - JWT authentication flow
-  - Token generation/validation
-  - Stateless security
-  - Refresh token support
-
-## Features
-
-- **Core Management Modules**:
-  - Student Management
-  - Teacher Management
-  - Course Management
-  - Class/Section Management
-  - Enrollment System
-  - Academic Records Tracking
-
-- **Advanced JPA Implementation**:
-  - Base Entity with audit fields (createdAt, updatedAt)
-  - Complex entity relationships (OneToMany, ManyToMany with join tables)
-  - Inheritance strategies (MappedSuperclass for Person entity)
-  - UUID-based identifiers using `AbstractPersistable`
-  - Criteria API for dynamic query building
-  - Bean Validation (Hibernate Validator)
-  - Optimized JPA configuration (`spring.jpa.open-in-view=false`)
-
-- **Technical Features**:
-  - RESTful API with proper HTTP status codes
-  - DTO Pattern with MapStruct mapping
-  - Swagger UI API Documentation
-  - Layered Architecture (Controller-Service-Repository)
-  - Comprehensive exception handling
-  - MySQL database integration
-  - Lombok for boilerplate reduction
-  - Maven build tool
-
-## Technology Stack
-
-- **Backend**: Spring Boot 3.4.1
-- **Java Version**: 21
-- **Persistence**: 
-  - Spring Data JPA
-  - Hibernate 6.4+
-  - MySQL 8.0+
-- **Mapping**: MapStruct 1.6.2
-- **API Documentation**: Swagger UI 2.8.1
-- **Build Tool**: Maven
-- **Development Tools**: Lombok 1.18.36
-
-## Installation & Setup
-
-### Prerequisites
-- Java 21 JDK
-- MySQL 8.0+
-- Maven 3.9+
-
-### Steps
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/ziadabdelnaby10/SchoolManagementSystem.git
-   ```
-2. Create MySQL database:
-   ```sql
-   CREATE DATABASE school_management;
-   ```
-3. Configure database credentials in `application.properties`:
-   ```properties
-   spring.datasource.url=jdbc:mysql://localhost:3306/school_management
-   spring.datasource.username=root
-   spring.datasource.password=password
-   ```
-4. Build the project:
-   ```bash
-   mvn clean install
-   ```
-5. Run the application:
-   ```bash
-   mvn spring-boot:run
-   ```
-
-Access Swagger UI at: http://localhost:1234/swagger-ui.html
-
-## Project Structure
-
-```
-src/
-├── main/
-│   ├── java/com/ziad/
-│   │   ├── config/          # Configuration classes
-│   │   ├── controller/      # REST Controllers
-│   │   ├── dto/             # Data Transfer Objects
-│   │   ├── entity/          # JPA Entities
-│   │   ├── response/        # Specific responses
-│   │   ├── request/         # Specific requests
-│   │   ├── mapper/          # MapStruct mappers
-│   │   ├── repository/      # JPA Repositories
-│   │   ├── service/         # Business logic layer
-│   │   └── SchoolManagementSystemApplication.java
-│   └── resources/
-│       └── application.properties
-```
-
-## Advanced Configuration
-
-### JPA Settings (application.properties)
-```properties
-# JPA/Hibernate Configuration
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.format_sql=true
-spring.jpa.open-in-view=false
-```
-
-### Base Entity Implementation
 ```java
-@MappedSuperclass
-public abstract class Person extends AbstractPersistable<UUID> {
+@RequiredArgsConstructor
+@Configuration
+@Profile("default")
+public class SecurityConfig {
+  //This is a Reminder that this instructions inspired by the spring security course
+  //This was build first for mvc to continue in mvc go to the course section 7 the part where the login starts
 
-    @Column(nullable = false, length = 45)
-    private String firstName;
+  /**
+   * Configures the Spring Security filter chain for the application.
+   * It sets up authentication, authorization rules, CSRF protection, custom filters, CORS, and exception handling.
+   *
+   * @param http The HttpSecurity object used to configure security for HTTP requests.
+   * @param csrfCookieFilter
+   * @param jwtTokenValidatorFilter
+   * @param authoritiesLoggingAfterFilter
+   * @param authoritiesLoggingAtFilter
+   * @param schoolUserDetailsService
+   * @param schoolUsernamePwdAuthenticationProvider
+   * @param customBasicAuthenticationEntryPointHandler
+   * @param authenticationEntryPoint
+   * @param customAccessDeniedHandler
+   * @return The configured SecurityFilterChain bean.
+   * @throws Exception if an error occurs during configuration.
+   */
+  @Bean
+  SecurityFilterChain securityFilterChain(
+          HttpSecurity http,
+          CSRFCookieFilter csrfCookieFilter,
+          JWTTokenValidatorFilter jwtTokenValidatorFilter,
+          AuthoritiesLoggingAfterFilter authoritiesLoggingAfterFilter,
+          AuthoritiesLoggingAtFilter authoritiesLoggingAtFilter,
+          SchoolUserDetailsService schoolUserDetailsService,
+          SchoolUsernamePwdAuthenticationProvider schoolUsernamePwdAuthenticationProvider,
+          CustomBasicAuthenticationEntryPointHandler customBasicAuthenticationEntryPointHandler,
+          AuthenticationEntryPoint authenticationEntryPoint,
+          CustomAccessDeniedHandler customAccessDeniedHandler
+  ) throws Exception {
 
-    @Column(nullable = false, length = 45)
-    private String lastName;
+    // Define path patterns for role-based access
+    var anyUser = new String[]{"/api/users/login", "/api/users"};
+    var anyAdmin = new String[]{"/api/students", "/api/parents", "/api/teachers"};
+    var anyStudent = new String[]{"/api/students/**"};
+    var anyParent = new String[]{"/api/parents/**"};
+    var anyTeacher = new String[]{"/api/teachers/**"};
+    var swagger = new String[]{"/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/api-docs/**"};
 
-    @Column(nullable = false, unique = true, length = 45)
-    private String email;
 
-    @Column
-    private Boolean isMale;
+    http
+            // Use custom user details service and authentication provider
+            .userDetailsService(schoolUserDetailsService)
+            .authenticationProvider(schoolUsernamePwdAuthenticationProvider)
 
-    @Column(nullable = false, length = 45)
-    private String password;
+            // Save the SecurityContext on authentication (even for stateless sessions)
+            .securityContext(contextConfig -> contextConfig.requireExplicitSave(false))
 
-    @Column(length = 15)
-    private String phone;
+            // Session management policy - session will always be created
+            .sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-    @Column(length = 15)
-    private String mobile;
+            // CORS configuration to allow all origins, headers, and methods
+            .cors(corsConfig -> corsConfig.configurationSource(request -> {
+              var config = new CorsConfiguration();
+              config.setAllowCredentials(Boolean.TRUE);
+              config.setAllowedOrigins(List.of("http://localhost:4200"));
+              config.setAllowedHeaders(List.of("*"));
+              config.setAllowedMethods(List.of("*"));
+              config.setMaxAge(3600L);
+              config.setExposedHeaders(List.of(HttpHeaders.AUTHORIZATION));
+              return config;
+            }))
 
-    @Column
-    @Temporal(TemporalType.DATE)
-    private Date dateOfBirth;
+            // CSRF configuration
+            .csrf(csrfConfig -> csrfConfig
+                    // CSRF handler to support token as a request attribute
+                    .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+                    .ignoringRequestMatchers(anyUser)
+                    .ignoringRequestMatchers(swagger)
+                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
 
-    @Column
-    private Boolean isActive;
+            // Add custom security filters
+            .addFilterAfter(csrfCookieFilter, BasicAuthenticationFilter.class)
+//                .addFilterBefore(requestValidationBeforeFilter, BasicAuthenticationFilter.class)
+            .addFilterAfter(authoritiesLoggingAfterFilter, BasicAuthenticationFilter.class)
+            .addFilterAt(authoritiesLoggingAtFilter, BasicAuthenticationFilter.class)
+//                .addFilterAfter(jwtTokenGeneratorFilter, BasicAuthenticationFilter.class)
+            .addFilterBefore(jwtTokenValidatorFilter, BasicAuthenticationFilter.class)
+
+            // Require HTTP (non-HTTPS) channel for all requests
+            .requiresChannel(requiresChannel -> requiresChannel.anyRequest().requiresInsecure())//For HTTP
+
+            // Authorization rules for different user roles
+            .authorizeHttpRequests(
+                    (requests) -> requests
+                            .requestMatchers(anyAdmin).hasAuthority(SystemRole.MANAGER.toString())
+                            .requestMatchers(anyStudent).hasAuthority(SystemRole.STUDENT.toString())
+                            .requestMatchers(anyParent).hasAuthority(SystemRole.PARENT.toString())
+                            .requestMatchers(anyTeacher).hasAuthority(SystemRole.TEACHER.toString())
+                            .requestMatchers(swagger).permitAll()
+                            .requestMatchers(anyUser).permitAll()
+                            .anyRequest().authenticated()
+            )
+
+            // Disable default form-based login
+            .formLogin(AbstractHttpConfigurer::disable)
+
+            // Configure HTTP Basic authentication and custom entry point
+            .httpBasic(hbc -> hbc.authenticationEntryPoint(authenticationEntryPoint))
+
+            // Exception handling with custom handlers
+            .exceptionHandling(ehc -> ehc
+                    .accessDeniedHandler(customAccessDeniedHandler)
+                    .authenticationEntryPoint(customBasicAuthenticationEntryPointHandler)
+            );
+
+    // Build and return the security filter chain
+    return http.build();
+  }
+
+  @Bean
+  SchoolUserDetailsService schoolUserDetailsService(PersonRepository personRepository) {
+    return new SchoolUserDetailsService(personRepository);
+  }
+
+  @Bean
+  PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
+
+  @Bean
+  public AuthenticationManager authenticationManager(SchoolUsernamePwdAuthenticationProvider authenticationProvider) {
+    ProviderManager providerManager = new ProviderManager(authenticationProvider);
+    providerManager.setEraseCredentialsAfterAuthentication(false);
+    return providerManager;
+  }
 }
 ```
 
-### Entity Relationships Example
-```java
-@Entity
-public class Student extends Person {
+### 👥 Default Users
+User Type | Role
+Manager | MANAGER
+Student | STUDENT
+Teacher | TEACHER
+Parent | PARENT
 
-    @ManyToOne
-    private StudyYear currentYear;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
-    private Parent parent;
-
-    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
-    private Set<Attendance> attendance = new HashSet<>();
-
-    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
-    private Set<ExamResult> examResults = new HashSet<>();
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "classroom_student",
-            joinColumns = @JoinColumn(name = "student_id"),
-            inverseJoinColumns = @JoinColumn(name = "classroom_id")
-    )
-    private Set<Classroom> classrooms = new HashSet<>();
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "course_student",
-            joinColumns = @JoinColumn(name = "student_id"),
-            inverseJoinColumns = @JoinColumn(name = "course_id")
-    )
-    private Set<Course> courses = new HashSet<>();
-}
+### ⚙️ Setup Instructions
+- Checkout this branch:
+```bash
+git checkout basic-security
 ```
-
-## API Documentation
-
-The system provides comprehensive API documentation through Swagger UI:
-- **Interactive Documentation**: http://localhost:1234/swagger-ui.html
-- **OpenAPI JSON**: http://localhost:1234/v3/api-docs
-
-## Upcoming Features
-
-- Role-based Access Control (RBAC)
-- Reporting & Analytics
-- Caching Mechanism (Redis)
-- Email Notifications
-- Advanced Search with Specifications
-- Security Authentication and Authorization
-- Nice UI Frontend (Thymeleaf or JavaFx)
-
-## Contributing
-
-Contributions are welcome! Please follow these steps:
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/your-feature`)
-3. Commit your changes (`git commit -m 'Add some feature'`)
-4. Push to the branch (`git push origin feature/your-feature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- Spring Boot Team
-- Hibernate Community
-- MySQL Development Team
-- MapStruct Maintainers
-
----
-
-**Note**: This project is currently in active development. Core functionality is stable, but new features are being added regularly based on frontend requirements.
-
-[//]: # (This README includes:)
-
-[//]: # (1. Technology badges for quick overview)
-
-[//]: # (2. Detailed feature list highlighting advanced implementations)
-
-[//]: # (3. Clear installation instructions)
-
-[//]: # (4. Project structure visualization)
-
-[//]: # (5. Code snippets for key implementations)
-
-[//]: # (6. API documentation information)
-
-[//]: # (7. Roadmap for future development)
-
-[//]: # (8. Contribution guidelines)
-
-[//]: # (9. License information)
-
-[//]: # ()
-[//]: # (You might want to:)
-
-[//]: # (1. Add specific environment variables for production)
-
-[//]: # (2. Include sample API requests/responses)
-
-[//]: # (3. Add database schema diagram)
-
-[//]: # (4. Include security configuration details once implemented)
-
-[//]: # (5. Add testing instructions and coverage reports)
-
-[//]: # (6. Include deployment instructions for cloud platforms)
+- Build and run:
+```bash
+mvn spring-boot:run
+```
