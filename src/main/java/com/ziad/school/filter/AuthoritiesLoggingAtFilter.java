@@ -8,6 +8,7 @@ import java.io.IOException;
 
 @Component
 @Slf4j
+@Component
 public class AuthoritiesLoggingAtFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
