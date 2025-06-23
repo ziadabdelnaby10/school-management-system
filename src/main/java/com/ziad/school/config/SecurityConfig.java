@@ -5,7 +5,7 @@ import com.ziad.school.exceptionhandling.CustomBasicAuthenticationEntryPointHand
 import com.ziad.school.filter.AuthoritiesLoggingAfterFilter;
 import com.ziad.school.filter.AuthoritiesLoggingAtFilter;
 import com.ziad.school.filter.CSRFCookieFilter;
-import com.ziad.school.filter.JWTTokenValidatorFilter;
+import com.ziad.school.filter.RequestValidationBeforeFilter;
 import com.ziad.school.model.base.SystemRole;
 import com.ziad.school.repository.PersonRepository;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +42,6 @@ public class SecurityConfig {
      *
      * @param http The HttpSecurity object used to configure security for HTTP requests.
      * @param csrfCookieFilter
-     * @param jwtTokenValidatorFilter
      * @param authoritiesLoggingAfterFilter
      * @param authoritiesLoggingAtFilter
      * @param schoolUserDetailsService
@@ -57,15 +56,14 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             CSRFCookieFilter csrfCookieFilter,
-            JWTTokenValidatorFilter jwtTokenValidatorFilter,
             AuthoritiesLoggingAfterFilter authoritiesLoggingAfterFilter,
             AuthoritiesLoggingAtFilter authoritiesLoggingAtFilter,
             SchoolUserDetailsService schoolUserDetailsService,
             SchoolUsernamePwdAuthenticationProvider schoolUsernamePwdAuthenticationProvider,
             CustomBasicAuthenticationEntryPointHandler customBasicAuthenticationEntryPointHandler,
             AuthenticationEntryPoint authenticationEntryPoint,
-            CustomAccessDeniedHandler customAccessDeniedHandler
-    ) throws Exception {
+            CustomAccessDeniedHandler customAccessDeniedHandler,
+            RequestValidationBeforeFilter requestValidationBeforeFilter) throws Exception {
 
         // Define path patterns for role-based access
         var anyUser = new String[]{"/api/users/login", "/api/users"};
@@ -109,11 +107,9 @@ public class SecurityConfig {
 
                 // Add custom security filters
                 .addFilterAfter(csrfCookieFilter, BasicAuthenticationFilter.class)
-//                .addFilterBefore(requestValidationBeforeFilter, BasicAuthenticationFilter.class)
+                .addFilterBefore(requestValidationBeforeFilter, BasicAuthenticationFilter.class)
                 .addFilterAfter(authoritiesLoggingAfterFilter, BasicAuthenticationFilter.class)
                 .addFilterAt(authoritiesLoggingAtFilter, BasicAuthenticationFilter.class)
-//                .addFilterAfter(jwtTokenGeneratorFilter, BasicAuthenticationFilter.class)
-                .addFilterBefore(jwtTokenValidatorFilter, BasicAuthenticationFilter.class)
 
                 // Require HTTP (non-HTTPS) channel for all requests
                 .requiresChannel(requiresChannel -> requiresChannel.anyRequest().requiresInsecure())//For HTTP
@@ -147,19 +143,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    SchoolUserDetailsService schoolUserDetailsService(PersonRepository personRepository) {
-        return new SchoolUserDetailsService(personRepository);
-    }
-
-    @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(SchoolUsernamePwdAuthenticationProvider authenticationProvider) {
-        ProviderManager providerManager = new ProviderManager(authenticationProvider);
-        providerManager.setEraseCredentialsAfterAuthentication(false);
-        return providerManager;
     }
 }
