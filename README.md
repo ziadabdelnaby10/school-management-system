@@ -214,6 +214,8 @@ public class JwtTokenService {
 ```
 
 ### Authentication Flow
+
+```mermaid
 sequenceDiagram
     participant Client
     participant Server
@@ -227,7 +229,7 @@ sequenceDiagram
         Server-->>Client: New Access Token
         Client->>Server: Retry Request
     end
-
+```
 
 ### 👥 Default Users
 User Type | Role
