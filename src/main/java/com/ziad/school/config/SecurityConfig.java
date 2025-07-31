@@ -2,25 +2,18 @@ package com.ziad.school.config;
 
 import com.ziad.school.exceptionhandling.CustomAccessDeniedHandler;
 import com.ziad.school.exceptionhandling.CustomBasicAuthenticationEntryPointHandler;
-import com.ziad.school.filter.AuthoritiesLoggingAfterFilter;
-import com.ziad.school.filter.AuthoritiesLoggingAtFilter;
 import com.ziad.school.filter.CSRFCookieFilter;
-import com.ziad.school.filter.JWTTokenValidatorFilter;
 import com.ziad.school.model.base.SystemRole;
-import com.ziad.school.repository.PersonRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
@@ -40,15 +33,9 @@ public class SecurityConfig {
      * Configures the Spring Security filter chain for the application.
      * It sets up authentication, authorization rules, CSRF protection, custom filters, CORS, and exception handling.
      *
-     * @param http The HttpSecurity object used to configure security for HTTP requests.
+     * @param http                                       The HttpSecurity object used to configure security for HTTP requests.
      * @param csrfCookieFilter
-     * @param jwtTokenValidatorFilter
-     * @param authoritiesLoggingAfterFilter
-     * @param authoritiesLoggingAtFilter
-     * @param schoolUserDetailsService
-     * @param schoolUsernamePwdAuthenticationProvider
      * @param customBasicAuthenticationEntryPointHandler
-     * @param authenticationEntryPoint
      * @param customAccessDeniedHandler
      * @return The configured SecurityFilterChain bean.
      * @throws Exception if an error occurs during configuration.
@@ -57,18 +44,13 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             CSRFCookieFilter csrfCookieFilter,
-            JWTTokenValidatorFilter jwtTokenValidatorFilter,
-            AuthoritiesLoggingAfterFilter authoritiesLoggingAfterFilter,
-            AuthoritiesLoggingAtFilter authoritiesLoggingAtFilter,
-            SchoolUserDetailsService schoolUserDetailsService,
-            SchoolUsernamePwdAuthenticationProvider schoolUsernamePwdAuthenticationProvider,
             CustomBasicAuthenticationEntryPointHandler customBasicAuthenticationEntryPointHandler,
-            AuthenticationEntryPoint authenticationEntryPoint,
-            CustomAccessDeniedHandler customAccessDeniedHandler
+            CustomAccessDeniedHandler customAccessDeniedHandler,
+            JwtAuthenticationConverter jwtAuthenticationConverter
     ) throws Exception {
 
         // Define path patterns for role-based access
-        var anyUser = new String[]{"/api/users/login", "/api/users"};
+        var anyUser = new String[]{"/api/users"};
         var anyAdmin = new String[]{"/api/students", "/api/parents", "/api/teachers"};
         var anyStudent = new String[]{"/api/students/**"};
         var anyParent = new String[]{"/api/parents/**"};
@@ -77,10 +59,6 @@ public class SecurityConfig {
 
 
         http
-                // Use custom user details service and authentication provider
-                .userDetailsService(schoolUserDetailsService)
-                .authenticationProvider(schoolUsernamePwdAuthenticationProvider)
-
                 // Save the SecurityContext on authentication (even for stateless sessions)
                 .securityContext(contextConfig -> contextConfig.requireExplicitSave(false))
 
@@ -110,10 +88,10 @@ public class SecurityConfig {
                 // Add custom security filters
                 .addFilterAfter(csrfCookieFilter, BasicAuthenticationFilter.class)
 //                .addFilterBefore(requestValidationBeforeFilter, BasicAuthenticationFilter.class)
-                .addFilterAfter(authoritiesLoggingAfterFilter, BasicAuthenticationFilter.class)
-                .addFilterAt(authoritiesLoggingAtFilter, BasicAuthenticationFilter.class)
+//                .addFilterAfter(authoritiesLoggingAfterFilter, BasicAuthenticationFilter.class)
+//                .addFilterAt(authoritiesLoggingAtFilter, BasicAuthenticationFilter.class)
 //                .addFilterAfter(jwtTokenGeneratorFilter, BasicAuthenticationFilter.class)
-                .addFilterBefore(jwtTokenValidatorFilter, BasicAuthenticationFilter.class)
+//                .addFilterBefore(jwtTokenValidatorFilter, BasicAuthenticationFilter.class)
 
                 // Require HTTP (non-HTTPS) channel for all requests
                 .requiresChannel(requiresChannel -> requiresChannel.anyRequest().requiresInsecure())//For HTTP
@@ -128,13 +106,11 @@ public class SecurityConfig {
                                 .requestMatchers(swagger).permitAll()
                                 .requestMatchers(anyUser).permitAll()
                                 .anyRequest().authenticated()
-                )
+                );
 
-                // Disable default form-based login
-                .formLogin(AbstractHttpConfigurer::disable)
-
-                // Configure HTTP Basic authentication and custom entry point
-                .httpBasic(hbc -> hbc.authenticationEntryPoint(authenticationEntryPoint))
+        http.oauth2ResourceServer(rsc -> rsc.jwt(
+                        jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter)
+                ))
 
                 // Exception handling with custom handlers
                 .exceptionHandling(ehc -> ehc
@@ -147,19 +123,14 @@ public class SecurityConfig {
     }
 
     @Bean
-    SchoolUserDetailsService schoolUserDetailsService(PersonRepository personRepository) {
-        return new SchoolUserDetailsService(personRepository);
-    }
-
-    @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(SchoolUsernamePwdAuthenticationProvider authenticationProvider) {
-        ProviderManager providerManager = new ProviderManager(authenticationProvider);
-        providerManager.setEraseCredentialsAfterAuthentication(false);
-        return providerManager;
+    JwtAuthenticationConverter jwtAuthenticationConverter(KeyCloakRoleConverter keyCloakRoleConverter) {
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(keyCloakRoleConverter);
+        return jwtAuthenticationConverter;
     }
 }

@@ -30,9 +30,6 @@ public class UserController {
     private final ParentService parentService;
     private final TeacherService teacherService;
 
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenService jwtTokenService;
-
     @PostMapping("/student")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<String> registerUser(@RequestBody @Valid AddStudentRequest request) {
@@ -75,22 +72,5 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-    }
-
-    @GetMapping("/login")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseEntity<?> login(@RequestBody @Valid @NotNull UserLoginRequest loginRequest) {
-        log.info("The User in login endpoint : {}", loginRequest != null ? loginRequest.toString() : "NONE");
-
-        StringBuilder jwt = new StringBuilder();
-        var authentication = UsernamePasswordAuthenticationToken.unauthenticated(loginRequest.email(), loginRequest.password());
-        var authenticationResponse = authenticationManager.authenticate(authentication);
-
-        if (authenticationResponse != null && authenticationResponse.isAuthenticated()) {
-            log.debug("The User Details : {}", authenticationResponse.getName() + " " + authenticationResponse.getAuthorities());
-            jwt.insert(0, jwtTokenService.generateToken(authenticationResponse.getName() , authenticationResponse.getAuthorities()));
-        }
-
-        return new ResponseEntity<>(new AuthenticationResponse(new Date(), "Bearer", jwt.toString(), 123L), HttpStatus.ACCEPTED);
     }
 }
